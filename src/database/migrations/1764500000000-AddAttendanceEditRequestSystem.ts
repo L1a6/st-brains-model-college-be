@@ -9,21 +9,59 @@ export class AddAttendanceAutoLock1764500000000 implements MigrationInterface {
   name = 'AddAttendanceAutoLock1764500000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Add is_locked column to schedule_based_attendance
+    // Ensure uuid_generate_v4() is available for this migration.
+    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+
+    // Current table name in entities is attendance_records (legacy: schedule_based_attendance).
     await queryRunner.query(`
-      ALTER TABLE "schedule_based_attendance" 
-      ADD COLUMN "is_locked" boolean NOT NULL DEFAULT false
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1
+          FROM information_schema.tables
+          WHERE table_schema = 'public'
+            AND table_name = 'attendance_records'
+        )
+        AND NOT EXISTS (
+          SELECT 1
+          FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'attendance_records'
+            AND column_name = 'is_locked'
+        ) THEN
+          ALTER TABLE "attendance_records"
+          ADD COLUMN "is_locked" boolean NOT NULL DEFAULT false;
+        END IF;
+      END
+      $$;
     `);
 
-    // Add is_locked column to student_daily_attendance
     await queryRunner.query(`
-      ALTER TABLE "student_daily_attendance" 
-      ADD COLUMN "is_locked" boolean NOT NULL DEFAULT false
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1
+          FROM information_schema.tables
+          WHERE table_schema = 'public'
+            AND table_name = 'student_daily_attendance'
+        )
+        AND NOT EXISTS (
+          SELECT 1
+          FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'student_daily_attendance'
+            AND column_name = 'is_locked'
+        ) THEN
+          ALTER TABLE "student_daily_attendance"
+          ADD COLUMN "is_locked" boolean NOT NULL DEFAULT false;
+        END IF;
+      END
+      $$;
     `);
 
     // Create attendance_edit_requests table
     await queryRunner.query(`
-      CREATE TABLE "attendance_edit_requests" (
+      CREATE TABLE IF NOT EXISTS "attendance_edit_requests" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
         "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -45,75 +83,87 @@ export class AddAttendanceAutoLock1764500000000 implements MigrationInterface {
 
     // Create indexes
     await queryRunner.query(`
-      CREATE INDEX "IDX_attendance_edit_requests_attendance" 
+      CREATE INDEX IF NOT EXISTS "IDX_attendance_edit_requests_attendance" 
       ON "attendance_edit_requests" ("attendance_id", "attendance_type")
     `);
 
     await queryRunner.query(`
-      CREATE INDEX "IDX_attendance_edit_requests_requested_by" 
+      CREATE INDEX IF NOT EXISTS "IDX_attendance_edit_requests_requested_by" 
       ON "attendance_edit_requests" ("requested_by")
     `);
 
     await queryRunner.query(`
-      CREATE INDEX "IDX_attendance_edit_requests_status" 
+      CREATE INDEX IF NOT EXISTS "IDX_attendance_edit_requests_status" 
       ON "attendance_edit_requests" ("status")
     `);
 
-    // Add foreign key constraints
+    // Add foreign keys only if they are not already present.
     await queryRunner.query(`
-      ALTER TABLE "attendance_edit_requests" 
-      ADD CONSTRAINT "FK_attendance_edit_requests_requested_by" 
-      FOREIGN KEY ("requested_by") REFERENCES "users"("id") 
-      ON DELETE NO ACTION ON UPDATE NO ACTION
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM information_schema.table_constraints
+          WHERE constraint_name = 'FK_attendance_edit_requests_requested_by'
+        ) THEN
+          ALTER TABLE "attendance_edit_requests"
+          ADD CONSTRAINT "FK_attendance_edit_requests_requested_by"
+          FOREIGN KEY ("requested_by") REFERENCES "users"("id")
+          ON DELETE NO ACTION ON UPDATE NO ACTION;
+        END IF;
+      END
+      $$;
     `);
 
     await queryRunner.query(`
-      ALTER TABLE "attendance_edit_requests" 
-      ADD CONSTRAINT "FK_attendance_edit_requests_reviewed_by" 
-      FOREIGN KEY ("reviewed_by") REFERENCES "users"("id") 
-      ON DELETE NO ACTION ON UPDATE NO ACTION
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM information_schema.table_constraints
+          WHERE constraint_name = 'FK_attendance_edit_requests_reviewed_by'
+        ) THEN
+          ALTER TABLE "attendance_edit_requests"
+          ADD CONSTRAINT "FK_attendance_edit_requests_reviewed_by"
+          FOREIGN KEY ("reviewed_by") REFERENCES "users"("id")
+          ON DELETE NO ACTION ON UPDATE NO ACTION;
+        END IF;
+      END
+      $$;
     `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop foreign key constraints
+    // Drop foreign key constraints if present.
     await queryRunner.query(`
-      ALTER TABLE "attendance_edit_requests" 
-      DROP CONSTRAINT "FK_attendance_edit_requests_reviewed_by"
+      ALTER TABLE IF EXISTS "attendance_edit_requests"
+      DROP CONSTRAINT IF EXISTS "FK_attendance_edit_requests_reviewed_by"
     `);
 
     await queryRunner.query(`
-      ALTER TABLE "attendance_edit_requests" 
-      DROP CONSTRAINT "FK_attendance_edit_requests_requested_by"
+      ALTER TABLE IF EXISTS "attendance_edit_requests"
+      DROP CONSTRAINT IF EXISTS "FK_attendance_edit_requests_requested_by"
     `);
 
     // Drop indexes
-    await queryRunner.query(`
-      DROP INDEX "IDX_attendance_edit_requests_status"
-    `);
+    await queryRunner.query('DROP INDEX IF EXISTS "IDX_attendance_edit_requests_status"');
 
-    await queryRunner.query(`
-      DROP INDEX "IDX_attendance_edit_requests_requested_by"
-    `);
+    await queryRunner.query('DROP INDEX IF EXISTS "IDX_attendance_edit_requests_requested_by"');
 
-    await queryRunner.query(`
-      DROP INDEX "IDX_attendance_edit_requests_attendance"
-    `);
+    await queryRunner.query('DROP INDEX IF EXISTS "IDX_attendance_edit_requests_attendance"');
 
     // Drop table
-    await queryRunner.query(`
-      DROP TABLE "attendance_edit_requests"
-    `);
+    await queryRunner.query('DROP TABLE IF EXISTS "attendance_edit_requests"');
 
     // Remove is_locked columns
     await queryRunner.query(`
-      ALTER TABLE "student_daily_attendance" 
-      DROP COLUMN "is_locked"
+      ALTER TABLE IF EXISTS "student_daily_attendance"
+      DROP COLUMN IF EXISTS "is_locked"
     `);
 
     await queryRunner.query(`
-      ALTER TABLE "schedule_based_attendance" 
-      DROP COLUMN "is_locked"
+      ALTER TABLE IF EXISTS "attendance_records"
+      DROP COLUMN IF EXISTS "is_locked"
     `);
   }
 }

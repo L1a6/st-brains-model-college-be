@@ -162,7 +162,7 @@ export class GoogleLoginDto {
 
   @ApiProperty({
     example: 'a1b2c3d4... (Invite Token)',
-    description: 'Invite Token (Required for new users)',
+    description: 'Invite Token',
     required: false,
   })
   @IsString()

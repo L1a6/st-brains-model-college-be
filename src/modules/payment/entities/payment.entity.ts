@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-import { Student } from 'src/modules/student/entities';
+import { Student } from '../../student/entities/student.entity';
 
 import { BaseEntity } from '../../../entities/base-entity';
 import { Term } from '../../academic-term/entities/term.entity';

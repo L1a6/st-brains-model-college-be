@@ -9,8 +9,6 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 
-import { Student } from 'src/modules/student/entities';
-
 import { IPaginationMeta } from '../../../common/types/base-response.interface';
 import * as sysMsg from '../../../constants/system.messages';
 import { AcademicSessionService } from '../../academic-session/academic-session.service';
@@ -19,6 +17,7 @@ import { TermModelAction } from '../../academic-term/model-actions';
 import { ClassStudent } from '../../class/entities/class-student.entity';
 import { ClassTeacher } from '../../class/entities/class-teacher.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
+import { Student } from '../../student/entities/student.entity';
 import { Schedule } from '../../timetable/entities/schedule.entity';
 import { DayOfWeek } from '../../timetable/enums/timetable.enums';
 import {
@@ -1213,13 +1212,16 @@ export class AttendanceService {
       throw new BadRequestException(sysMsg.REGISTRATION_NUMBER_REQUIRED);
     }
 
-    // 🔎 Find student by registration_number
-    const student = await this.dataSource.manager.findOne(Student, {
-      where: { registration_number: registrationNumber },
-      relations: ['user', 'parent'],
-    });
+    // 🔎 Find student by registration_number using raw query to avoid entity resolution issues
+    const studentRows: Array<{ id: string; registration_number: string }> =
+      await this.dataSource.manager.query(
+        `SELECT id, registration_number FROM students WHERE registration_number = $1 LIMIT 1`,
+        [registrationNumber],
+      );
 
-    if (!student) {
+    const studentRow = studentRows[0];
+
+    if (!studentRow) {
       throw new NotFoundException(sysMsg.CHILD_REGISTRATION_NUMBER_NOT_FOUNS);
     }
 
@@ -1241,7 +1243,7 @@ export class AttendanceService {
           session_id: await this.academicSessionService
             .activeSessions()
             .then((s) => s.data.id),
-          student_id: student.id, // 👈 use student.id after lookup
+          student_id: studentRow.id,
         },
       });
 
@@ -1304,8 +1306,8 @@ export class AttendanceService {
       message: sysMsg.STUDENT_MONTHLY_ATTENDANCE_RETRIEVED,
       month: this.monthNames[month],
       year,
-      registration_number: student.registration_number,
-      student_id: student.id,
+      registration_number: studentRow.registration_number,
+      student_id: studentRow.id,
       total_days_in_month: totalDaysInMonth,
       days_present: daysPresent,
       days_absent: daysAbsent,

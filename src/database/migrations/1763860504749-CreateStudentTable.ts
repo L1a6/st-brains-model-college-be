@@ -10,10 +10,18 @@ export class CreateStudentTable1763800000000 implements MigrationInterface {
         "user_id" uuid NOT NULL,
         "stream_id" uuid,
         CONSTRAINT "UQ_student_user" UNIQUE ("user_id"),
-        CONSTRAINT "FK_student_user" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_student_stream" FOREIGN KEY ("stream_id") REFERENCES "stream"("id") ON DELETE SET NULL
+        CONSTRAINT "FK_student_user" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE
       )
     `);
+
+    const streamTable = await queryRunner.getTable('stream');
+    if (streamTable) {
+      await queryRunner.query(`
+        ALTER TABLE "students"
+        ADD CONSTRAINT "FK_student_stream"
+        FOREIGN KEY ("stream_id") REFERENCES "stream"("id") ON DELETE SET NULL
+      `);
+    }
 
     const table = await queryRunner.getTable('users');
     if (table && table.findColumnByName('stream_id')) {

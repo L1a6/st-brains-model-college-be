@@ -5,8 +5,6 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EmailModule } from '../email/email.module';
-import { Invite } from '../invites/entities/invites.entity';
-import { InviteModelAction } from '../invites/invite.model-action';
 import { Parent } from '../parent/entities/parent.entity';
 import { SessionModule } from '../session/session.module';
 import { Student } from '../student/entities/student.entity';
@@ -25,7 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     EmailModule,
     SessionModule,
     PassportModule,
-    TypeOrmModule.forFeature([Teacher, Student, Parent, Invite]),
+    TypeOrmModule.forFeature([Teacher, Student, Parent]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -41,7 +39,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtStrategy,
     JwtAuthGuard,
     RolesGuard,
-    InviteModelAction,
   ],
   exports: [AuthService, JwtAuthGuard, RolesGuard],
 })

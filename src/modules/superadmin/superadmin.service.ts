@@ -64,11 +64,11 @@ export class SuperadminService {
   private async sendWelcomeEmail(userName: string, email: string) {
     await this.emailService.sendMail({
       to: [{ email: email, name: userName }],
-      subject: 'Welcome to Open School Portal',
+      subject: "Welcome to St. Brian's Model College",
       templateNameID: EmailTemplateID.SUPERADMIN_WELCOME,
       templateData: {
         first_name: userName,
-        school_name: 'Open School Portal',
+        school_name: "St. Brian's Model College",
         logo_url: 'https://staging.schoolbase.africa/assets/logo.svg',
         role: Role.SUPERADMIN,
         invite_link: `

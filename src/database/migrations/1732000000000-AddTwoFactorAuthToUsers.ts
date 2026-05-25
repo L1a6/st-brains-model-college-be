@@ -5,9 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class AddTwoFactorAuthToUsers1732000000000
+export class AddTwoFactorAuthToUsers1763494386135
   implements MigrationInterface
 {
+  name = 'AddTwoFactorAuthToUsers1763494386135';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({

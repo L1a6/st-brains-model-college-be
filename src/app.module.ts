@@ -21,7 +21,6 @@ import { DatabaseModule } from './modules/database-setup/database.module';
 import { EmailModule } from './modules/email/email.module';
 import { FeesModule } from './modules/fees/fees.module';
 import { GradeModule } from './modules/grade/grade.module';
-import { InviteModule } from './modules/invites/invites.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ParentModule } from './modules/parent/parent.module';
 import { PaymentModule } from './modules/payment/payment.module';
@@ -38,7 +37,6 @@ import { TeacherSubjectModule } from './modules/teacher-subject/teacher-subject.
 import { TimetableModule } from './modules/timetable/timetable.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { UserModule } from './modules/user/user.module';
-import { WaitlistModule } from './modules/waitlist/waitlist.module';
 @Module({
   imports: [
     LoggerModule,
@@ -60,10 +58,13 @@ import { WaitlistModule } from './modules/waitlist/waitlist.module';
         autoLoadEntities: true,
         migrationsRun: false,
         synchronize: true,
+        ssl:
+          config.get<string>('DB_SSL') === 'true'
+            ? { rejectUnauthorized: false }
+            : false,
       }),
     }),
     AuthModule,
-    WaitlistModule,
     UserModule,
     EmailModule,
     SchoolModule,
@@ -72,7 +73,6 @@ import { WaitlistModule } from './modules/waitlist/waitlist.module';
     TeachersModule,
     ParentModule,
     ClassModule,
-    InviteModule,
     AcademicSessionModule,
     AttendanceModule,
     SubjectModule,

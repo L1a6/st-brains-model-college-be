@@ -38,7 +38,7 @@ async function bootstrap() {
     .setTitle("St. Brian's Model College API")
     .setDescription("API documentation for St. Brian's Model College")
     .setVersion('1.0')
-    .addTag('Waitlist')
+    .addTag('School Portal')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
