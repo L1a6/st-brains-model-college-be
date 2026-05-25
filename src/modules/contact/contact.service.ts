@@ -1,8 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+<<<<<<< HEAD
 import { InjectRepository } from '@nestjs/typeorm';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource, Repository } from 'typeorm';
+=======
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { DataSource } from 'typeorm';
+>>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 import { Logger } from 'winston';
 
 import { EmailTemplateID } from '../../constants/email-constants';
@@ -25,12 +30,16 @@ export class ContactService {
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
     private readonly spamDetectionService: SpamDetectionService,
+<<<<<<< HEAD
     @InjectRepository(Contact)
     private readonly contactRepository: Repository<Contact>,
+=======
+>>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   ) {
     this.logger = logger.child({ context: ContactService.name });
   }
 
+<<<<<<< HEAD
   async findAll(options: { page?: string; limit?: string }) {
     const page = Math.max(parseInt(options.page ?? '1', 10) || 1, 1);
     const limit = Math.min(
@@ -67,6 +76,8 @@ export class ContactService {
     };
   }
 
+=======
+>>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   async create(createContactDto: CreateContactDto) {
     this.spamDetectionService.validateSubmission(createContactDto);
 

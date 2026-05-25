@@ -459,6 +459,19 @@ export class TeachersAttendanceService {
       throw new BadRequestException(sysMsg.CHECK_IN_DATE_IS_IN_THE_FUTURE);
     }
 
+<<<<<<< HEAD
+=======
+    // --- Validate date is not too far in the past (e.g., max 7 days) ---
+    const maxPastDays = 7; //todo: get from school settings when implemented
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() - maxPastDays);
+    if (checkInDate < minDate) {
+      throw new BadRequestException(
+        sysMsg.CHECK_IN_DATE_CANNOT_BE_MORE_THAN_DAYS_IN_THE_PAST(maxPastDays),
+      );
+    }
+
+>>>>>>> cb0e039 (feat: build backend for St.Brain's College)
     // --- Validate check-in time is within school hours ---
     const schoolStartHour = 7; // 7:00 AM
     const schoolEndHour = 17; // 5:00 PM
@@ -499,6 +512,7 @@ export class TeachersAttendanceService {
       );
     }
 
+<<<<<<< HEAD
     // --- Validate date is not too far in the past (e.g., max 7 days) ---
     const maxPastDays = 7; //todo: get from school settings when implemented
     const minDate = new Date(today);
@@ -512,6 +526,8 @@ export class TeachersAttendanceService {
       );
     }
 
+=======
+>>>>>>> cb0e039 (feat: build backend for St.Brain's College)
     // --- Determine status based on check-in time (9 AM thresh) ---
     const dateString = checkInDate.toISOString().split('T')[0];
     const checkInTimestamp = new Date(`${dateString}T${dto.check_in_time}`);

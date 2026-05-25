@@ -169,8 +169,16 @@ export class TermService {
       throw new NotFoundException(sysMsg.TERM_NOT_FOUND);
     }
 
+<<<<<<< HEAD
     // Only prevent modification of archived terms, allow active/future terms
     if (termEntity.status === TermStatus.INACTIVE) {
+=======
+    // Only prevent modification of past (archived) terms, allow future terms
+    const today = this.normalizeDateToMidnight(new Date());
+    const termEndDate = this.normalizeDateToMidnight(termEntity.endDate);
+
+    if (today > termEndDate) {
+>>>>>>> cb0e039 (feat: build backend for St.Brain's College)
       throw new BadRequestException(sysMsg.ARCHIVED_TERM_LOCKED);
     }
 
