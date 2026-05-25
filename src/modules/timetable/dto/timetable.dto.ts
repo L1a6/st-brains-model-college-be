@@ -134,7 +134,7 @@ export class QueryTimetableDto {
   date?: string;
 }
 
-export class SubjectResponseDto {
+export class TimetableSubjectResponseDto {
   @ApiProperty({ description: 'Subject ID', example: 'uuid-string' })
   id: string;
 
@@ -174,8 +174,8 @@ export class ScheduleResponseDto extends CreateScheduleDto {
   })
   id: string;
 
-  @ApiPropertyOptional({ type: SubjectResponseDto })
-  subject?: SubjectResponseDto;
+  @ApiPropertyOptional({ type: TimetableSubjectResponseDto })
+  subject?: TimetableSubjectResponseDto;
 
   @ApiPropertyOptional({ type: TeacherResponseDto })
   teacher?: TeacherResponseDto;

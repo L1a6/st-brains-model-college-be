@@ -6,10 +6,12 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prebuild": "node -e \"const fs=require('fs'); ['dist','tsconfig.tsbuildinfo'].forEach((p)=>{ try { fs.rmSync(p,{recursive:true,force:true}); } catch {} });\"",
     "build": "node ./node_modules/@nestjs/cli/bin/nest.js build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node ./node_modules/@nestjs/cli/bin/nest.js start",
+    "prestart:dev": "node -e \"const fs=require('fs'); ['dist','tsconfig.tsbuildinfo'].forEach((p)=>{ try { fs.rmSync(p,{recursive:true,force:true}); } catch {} });\"",
     "start:dev": "node ./node_modules/@nestjs/cli/bin/nest.js start --watch",
     "start:debug": "node ./node_modules/@nestjs/cli/bin/nest.js start --debug --watch",
     "start:prod": "node dist/main",
