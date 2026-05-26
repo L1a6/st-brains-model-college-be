@@ -98,7 +98,12 @@ export class InviteService {
         accepted: false,
       };
 
-      const savedInvite = existingInvite
+      const isExpired =
+        existingInvite && new Date() > new Date(existingInvite.expires_at);
+
+      // If an existing invite is present and not expired, update it.
+      // If it's expired (or not present), create a fresh invite record.
+      const savedInvite = existingInvite && !isExpired
         ? await this.inviteModelAction.update({
             identifierOptions: { id: existingInvite.id },
             updatePayload: invitePayload,
