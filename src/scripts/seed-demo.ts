@@ -488,7 +488,8 @@ async function run() {
   }
 }
 
-run().catch((error) => {
-  logger.error('Demo seed failed:', error as any);
+run().catch((error: unknown) => {
+  const errMsg = error instanceof Error ? error.stack ?? error.message : String(error);
+  logger.error(`Demo seed failed: ${errMsg}`);
   process.exit(1);
 });
