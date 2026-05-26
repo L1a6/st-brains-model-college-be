@@ -15,7 +15,7 @@ const useLocalDatabaseFallback = (): boolean => {
     } else {
       normalizedHost = normalizedHost.split('/')[0].split(':')[0]
     }
-  } catch (_error) {
+  } catch {
     normalizedHost = ''
   }
 
