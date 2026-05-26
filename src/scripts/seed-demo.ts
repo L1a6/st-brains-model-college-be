@@ -33,7 +33,12 @@ import { TeacherTitle } from '../modules/teacher/enums/teacher.enum';
 import { Teacher } from '../modules/teacher/entities/teacher.entity';
 import { User, UserRole } from '../modules/user/entities/user.entity';
 
-const DEMO_PASSWORD = process.env.DEMO_PASSWORD || 'DemoPass123!';
+import { ConfigService } from '@nestjs/config';
+import { Logger } from '@nestjs/common';
+
+const config = new ConfigService();
+const DEMO_PASSWORD = config.get<string>('DEMO_PASSWORD') ?? 'DemoPass123!';
+const logger = new Logger('seed-demo');
 
 function mergeRoles(existingRoles: UserRole[] = [], incoming: UserRole[]) {
   return Array.from(new Set([...(existingRoles || []), ...incoming]));
@@ -42,16 +47,16 @@ function mergeRoles(existingRoles: UserRole[] = [], incoming: UserRole[]) {
 async function upsertUser(
   userRepo: Repository<User>,
   email: string,
-  first_name: string,
-  last_name: string,
+  firstName: string,
+  lastName: string,
   roles: UserRole[],
   hashedPassword: string,
 ) {
   const existing = await userRepo.findOne({ where: { email } });
 
   if (existing) {
-    existing.first_name = first_name;
-    existing.last_name = last_name;
+    existing.first_name = firstName;
+    existing.last_name = lastName;
     existing.is_active = true;
     existing.is_verified = true;
     existing.role = mergeRoles(existing.role, roles);
@@ -62,8 +67,8 @@ async function upsertUser(
   }
 
   const user = userRepo.create({
-    first_name,
-    last_name,
+    first_name: firstName,
+    last_name: lastName,
     email,
     password: hashedPassword,
     is_active: true,
@@ -75,7 +80,7 @@ async function upsertUser(
 }
 
 async function run() {
-  if (process.env.NODE_ENV === 'production') {
+  if (config.get<string>('NODE_ENV') === 'production') {
     throw new Error('Refusing to run demo seed in production');
   }
 
@@ -470,20 +475,20 @@ async function run() {
       }
     });
 
-    console.log('Demo seed complete.');
-    console.log('Demo login credentials:');
-    console.log(`Password for seeded users: ${DEMO_PASSWORD}`);
-    console.log('admin.demo@stbrians.edu');
-    console.log('teacher.demo@stbrians.edu');
-    console.log('parent.demo@stbrians.edu');
-    console.log('student.demo@stbrians.edu');
-    console.log('superadmin.demo@stbrians.edu');
+    logger.log('Demo seed complete.');
+    logger.log('Demo login credentials:');
+    logger.log(`Password for seeded users: ${DEMO_PASSWORD}`);
+    logger.log('admin.demo@stbrians.edu');
+    logger.log('teacher.demo@stbrians.edu');
+    logger.log('parent.demo@stbrians.edu');
+    logger.log('student.demo@stbrians.edu');
+    logger.log('superadmin.demo@stbrians.edu');
   } finally {
     await app.close();
   }
 }
 
 run().catch((error) => {
-  console.error('Demo seed failed:', error);
+  logger.error('Demo seed failed:', error as any);
   process.exit(1);
 });
