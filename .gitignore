@@ -41,4 +41,4 @@ lerna-debug.log*
 .env
 .env.setup.backup.*
 logs/
-# package-lock.json
+# package-lock.json (now tracked for CI)
