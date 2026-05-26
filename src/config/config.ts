@@ -6,7 +6,25 @@ const isDevelopmentEnv = (): boolean => {
 
 const useLocalDatabaseFallback = (): boolean => {
   const host = process.env.DB_HOST || ''
-  return isDevelopmentEnv() && (!host || host.includes('proxy.rlwy.net'))
+  const allowedHost = 'proxy.rlwy.net'
+
+  let normalizedHost = host.trim().toLowerCase()
+  try {
+    if (normalizedHost.includes('://')) {
+      normalizedHost = new URL(normalizedHost).hostname.toLowerCase()
+    } else {
+      normalizedHost = normalizedHost.split('/')[0].split(':')[0]
+    }
+  } catch (_error) {
+    normalizedHost = ''
+  }
+
+  normalizedHost = normalizedHost.replace(/\.$/, '')
+  const isAllowedHost =
+    normalizedHost === allowedHost ||
+    normalizedHost.endsWith(`.${allowedHost}`)
+
+  return isDevelopmentEnv() && (!normalizedHost || isAllowedHost)
 }
 
 export default () => ({
