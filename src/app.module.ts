@@ -99,13 +99,18 @@ import { UserModule } from './modules/user/user.module';
     AppService,
     LoggingInterceptor,
     {
-      provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor,
-    },
+    import { PaymentModule } from './modules/payment/payment.module';
+    import { QuizModule } from './modules/quiz/quiz.module';
+    import { ResultModule } from './modules/result/result.module';
+    import { RoomModule } from './modules/room/room.module';
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
     },
-  ],
-})
-export class AppModule {}
+      PaymentModule,
+      QuizModule,
+      ResultModule,
+      SuperadminModule,
+      PaymentModule,
+      ResultModule,
+      NotificationModule,
