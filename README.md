@@ -1,6 +1,6 @@
 # St. Brian's Model College - Backend
 
-A modern, scalable, NestJS powered backend system designed for schools to manage students, teachers, classes, attendance, results, timetables, and financial operations (fees, invoices, payments). Built for performance, multi-tenant usage, and clean developer experience.
+A modern, scalable NestJS backend for St. Brian's Model College. It powers student, teacher, class, attendance, results, timetable, fees, enrollment, and communications workflows.
 
 ## Features
 
@@ -9,7 +9,7 @@ A modern, scalable, NestJS powered backend system designed for schools to manage
 - RBAC Authentication (Admin, Teacher, Student)
 - User & School Management
 - Classes & Subjects Management
-- Student Enrollment
+- Student Enrollment and Enquiries
 - Attendance Tracking
 - Results & Grades Module
 - Timetable Scheduling
@@ -49,7 +49,7 @@ The backend is built in a modular monorepo structure to keep each domain clean a
 | users        | All system users (admin, teachers, students) |
 | classes      | School classes with assigned teacher         |
 | subjects     | Offered subjects                             |
-| enrollments  | Student → Class mappings                     |
+| contacts     | Public enrollment/contact submissions        |
 | attendance   | Check-ins & check-outs                       |
 | results      | Test scores and grades                       |
 | timetable    | Class schedules                              |
@@ -80,11 +80,11 @@ The backend is built in a modular monorepo structure to keep each domain clean a
 - Manage capacity
 - Create subjects
 
-### Enrollment Module
+### Enrollment & Contact Intake
 
-- Enroll students into classes
-- Track academic year
-- View all students in a class
+- Receive public enrollment requests
+- Store submissions in the `contacts` table
+- Surface submissions in the admin dashboard
 
 ### Attendance Module
 

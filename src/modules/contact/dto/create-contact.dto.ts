@@ -29,6 +29,16 @@ export class CreateContactDto {
   email: string;
 
   @ApiProperty({
+    description: 'Phone number for follow-up',
+    example: '+234 801 234 5678',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  @MaxLength(30)
+  phone?: string;
+
+  @ApiProperty({
     description: 'School name (optional)',
     example: 'Springfield High School',
     required: false,

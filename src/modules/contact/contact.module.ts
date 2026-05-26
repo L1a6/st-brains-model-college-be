@@ -5,6 +5,7 @@ import { RateLimitGuard } from '../../common/guards/rate-limit.guard';
 import { EmailModule } from '../email/email.module';
 
 import { ContactController } from './contact.controller';
+import { EnrollController } from './enroll.controller';
 import { ContactService } from './contact.service';
 import { Contact } from './entities/contact.entity';
 import { ContactModelAction } from './model-actions/contact-actions';
@@ -12,7 +13,7 @@ import { SpamDetectionService } from './spam-detection.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Contact]), EmailModule],
-  controllers: [ContactController],
+  controllers: [ContactController, EnrollController],
   providers: [
     ContactService,
     ContactModelAction,

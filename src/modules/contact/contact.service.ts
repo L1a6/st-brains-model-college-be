@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Logger } from 'winston';
 
 import { EmailTemplateID } from '../../constants/email-constants';
@@ -24,8 +25,43 @@ export class ContactService {
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
     private readonly spamDetectionService: SpamDetectionService,
+    @InjectRepository(Contact)
+    private readonly contactRepository: Repository<Contact>,
   ) {
     this.logger = logger.child({ context: ContactService.name });
+  }
+
+  async findAll(options: { page?: string; limit?: string }) {
+    const page = Math.max(parseInt(options.page ?? '1', 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(options.limit ?? '20', 10) || 20, 1), 100);
+    const skip = (page - 1) * limit;
+
+    const [contacts, total] = await this.contactRepository
+      .createQueryBuilder('contact')
+      .orderBy('contact.created_at', 'DESC')
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      status_code: 200,
+      message: 'Enrollments retrieved successfully',
+      data: contacts.map((contact) => ({
+        id: contact.id,
+        full_name: contact.full_name,
+        email: contact.email,
+        phone: contact.phone,
+        school_name: contact.school_name,
+        message: contact.message,
+        status: contact.status,
+        created_at: contact.created_at,
+        updated_at: contact.updated_at,
+      })),
+      total,
+      page,
+      limit,
+      total_pages: Math.ceil(total / limit),
+    };
   }
 
   async create(createContactDto: CreateContactDto) {

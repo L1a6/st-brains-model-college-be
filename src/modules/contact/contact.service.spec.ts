@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource, EntityManager } from 'typeorm';
@@ -20,6 +21,7 @@ describe('ContactService', () => {
   let dataSource: jest.Mocked<DataSource>;
   let emailService: jest.Mocked<EmailService>;
   let logger: Logger;
+  let contactRepository: { createQueryBuilder: jest.Mock };
 
   const mockCreateContactDto: CreateContactDto = {
     full_name: 'John Doe',
@@ -49,6 +51,10 @@ describe('ContactService', () => {
 
   const mockDataSource = {
     transaction: jest.fn(),
+  };
+
+  const mockContactRepository = {
+    createQueryBuilder: jest.fn(),
   };
 
   const mockContactModelAction = {
@@ -95,6 +101,10 @@ describe('ContactService', () => {
           provide: SpamDetectionService,
           useValue: mockSpamDetectionService,
         },
+        {
+          provide: getRepositoryToken(Contact),
+          useValue: mockContactRepository,
+        },
       ],
     }).compile();
 
@@ -103,6 +113,7 @@ describe('ContactService', () => {
     dataSource = module.get(DataSource);
     emailService = module.get(EmailService);
     logger = module.get(WINSTON_MODULE_PROVIDER);
+    contactRepository = module.get(getRepositoryToken(Contact));
   });
 
   afterEach(() => {
@@ -355,6 +366,47 @@ describe('ContactService', () => {
       expect(logger.info).toHaveBeenCalledWith('User confirmation sent', {
         email: mockCreateContactDto.email,
       });
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return paginated enrollments for admin dashboard', async () => {
+      const queryBuilder = {
+        orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValue([
+          [
+            {
+              id: 'contact-1',
+              full_name: 'Larry David',
+              email: 'larry@example.com',
+              phone: '+2348000000000',
+              school_name: 'St. Brian\'s Model College',
+              message: 'I want to enroll my child.',
+              status: ContactStatus.PENDING,
+              created_at: new Date('2026-05-26T10:00:00Z'),
+              updated_at: new Date('2026-05-26T10:00:00Z'),
+            },
+          ],
+          1,
+        ]),
+      };
+
+      contactRepository.createQueryBuilder.mockReturnValue(queryBuilder as never);
+
+      const result = await service.findAll({ page: '1', limit: '10' });
+
+      expect(contactRepository.createQueryBuilder).toHaveBeenCalledWith('contact');
+      expect(result.total).toBe(1);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toEqual(
+        expect.objectContaining({
+          full_name: 'Larry David',
+          email: 'larry@example.com',
+          status: ContactStatus.PENDING,
+        }),
+      );
     });
   });
 });

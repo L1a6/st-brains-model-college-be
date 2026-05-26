@@ -1,21 +1,20 @@
-## Contributing to Open School Portal
+## Contributing to St. Brian's Model College Backend
 
-Thank you for your interest in contributing to **Open School Portal**!
-We welcome all contributions — bug reports, feature proposals, documentation updates, and code improvements.
-Your participation helps make the platform smarter, more reliable, and more impactful for schools.
+Thank you for your interest in contributing to **St. Brian's Model College**!
+We welcome bug reports, feature proposals, documentation updates, and code improvements that help keep the backend reliable and easy to maintain.
 
 ## Getting Started
 
 ### 1. Fork the repository from GitHub.
 
 ```sh
-git clone https://github.com/<your-username>/open-school-portal.git
+git clone https://github.com/<your-username>/st-brians-model-college-BE.git
 ```
 
 ### 2. Navigate into the project directory:
 
 ```sh
-cd open-school-portal
+cd st-brians-model-college-BE
 ```
 
 ### 3. Environment Setup
@@ -44,7 +43,7 @@ npm run start:dev
 
 If you discover a bug:
 
-- Open an issue on the repository’s [GitHub Issues](https://github.com/hngprojects/open-school-portal-BE/issues) page.
+- Open an issue on the repository’s [GitHub Issues](https://github.com/L1a6/st-brains-model-college-be/issues) page.
 - Provide detailed steps to reproduce the bug.
 - Include expected vs. actual behavior.
 - Attach logs, screenshots, or error messages when possible.
@@ -52,9 +51,9 @@ If you discover a bug:
 
 ### Suggesting Features
 
-Have an idea that would improve Open School Portal?
+Have an idea that would improve St. Brian's Model College?
 
-- Create a feature request on [GitHub Issues](https://github.com/hngprojects/open-school-portal-BE/issues).
+- Create a feature request on [GitHub Issues](https://github.com/L1a6/st-brains-model-college-be/issues).
 - Describe the feature clearly and explain its value.
 - Share how you imagine it should behave or integrate with existing features.
 - Thoughtful feature suggestions help drive meaningful improvements.
@@ -73,7 +72,7 @@ Before writing any code:
 1. **Create a new branch for your work:**
 
    ```sh
-   git checkout -b feat/OSP-2145-your-feature-name
+  git checkout -b feat/your-feature-name
    ```
 
 2. Make your changes.
@@ -265,5 +264,5 @@ type: message
 
 ## Code of Conduct
 
-Open School Portal follows the **Contributor Covenant Code of Conduct**.
+St. Brian's Model College follows the **Contributor Covenant Code of Conduct**.
 All contributors are expected to uphold respectful, inclusive, and professional interactions.

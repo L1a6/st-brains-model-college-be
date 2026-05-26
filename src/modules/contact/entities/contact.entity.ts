@@ -24,6 +24,9 @@ export class Contact {
   @Column({ type: 'varchar', length: 255 })
   email: string;
 
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  phone?: string;
+
   @Column({ type: 'varchar', length: 200, nullable: true })
   school_name: string;
 
