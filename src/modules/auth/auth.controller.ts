@@ -58,7 +58,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @GoogleLoginDocs()
   googleLogin(@Body() googleLoginDto: GoogleLoginDto) {
-    return this.authService.googleLogin(googleLoginDto.token);
+    return this.authService.googleLogin(
+      googleLoginDto.token,
+      googleLoginDto.invite_token,
+    );
   }
 
   @RefreshTokenDocs()
