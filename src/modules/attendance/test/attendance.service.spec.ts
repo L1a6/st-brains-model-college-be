@@ -96,6 +96,7 @@ describe('AttendanceService', () => {
       manager: {
         findOne: mockFindOne,
         find: mockFind,
+        query: jest.fn().mockResolvedValue([]),
         createQueryBuilder: jest.fn(() => ({
           innerJoin: jest.fn().mockReturnThis(),
           leftJoinAndSelect: jest.fn().mockReturnThis(),

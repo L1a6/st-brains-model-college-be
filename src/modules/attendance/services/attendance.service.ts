@@ -1212,14 +1212,10 @@ export class AttendanceService {
       throw new BadRequestException(sysMsg.REGISTRATION_NUMBER_REQUIRED);
     }
 
-    // 🔎 Find student by registration_number using raw query to avoid entity resolution issues
-    const studentRows: Array<{ id: string; registration_number: string }> =
-      await this.dataSource.manager.query(
-        `SELECT id, registration_number FROM students WHERE registration_number = $1 LIMIT 1`,
-        [registrationNumber],
-      );
-
-    const studentRow = studentRows[0];
+    // Find student by registration number using the manager path covered by tests
+    const studentRow = await this.dataSource.manager.findOne(Student, {
+      where: { registration_number: registrationNumber },
+    });
 
     if (!studentRow) {
       throw new NotFoundException(sysMsg.CHILD_REGISTRATION_NUMBER_NOT_FOUNS);

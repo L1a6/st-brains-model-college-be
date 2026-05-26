@@ -22,6 +22,7 @@ import { EmailTemplateID } from '../../constants/email-constants';
 import * as sysMsg from '../../constants/system.messages';
 import { EmailService } from '../email/email.service';
 import { EmailPayload } from '../email/email.types';
+import { InviteModelAction } from '../invites/invite.model-action';
 import { SessionService } from '../session/session.service';
 import { UserService } from '../user/user.service';
 
@@ -45,6 +46,7 @@ export class AuthService {
     private readonly emailService: EmailService,
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
+    private readonly inviteModelAction: InviteModelAction,
   ) {
     this.logger = logger.child({ context: AuthService.name });
   }
@@ -382,7 +384,6 @@ export class AuthService {
   }
 
   async googleLogin(token: string, inviteToken?: string) {
-    void inviteToken;
     const { google } = config();
     const client = new OAuth2Client(google.clientId);
 
@@ -410,7 +411,23 @@ export class AuthService {
         );
       }
     } else {
-      // Create new user directly for the school portal
+      if (!inviteToken) {
+        throw new ForbiddenException(sysMsg.REGISTRATION_INVITE_ONLY);
+      }
+
+      const invite = await this.inviteModelAction.get({
+        identifierOptions: { token_hash: inviteToken },
+      });
+
+      if (!invite) {
+        throw new NotFoundException(sysMsg.INVALID_VERIFICATION_TOKEN);
+      }
+
+      if (invite.email !== email) {
+        throw new ConflictException(sysMsg.INVITE_EMAIL_MISMATCH);
+      }
+
+      // Create new user from the invitation details
       const password = crypto.randomBytes(16).toString('hex');
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -430,6 +447,12 @@ export class AuthService {
         gender: 'Other',
         dob: new Date().toISOString().split('T')[0],
         phone: '',
+      });
+
+      await this.inviteModelAction.update({
+        identifierOptions: { id: invite.id },
+        updatePayload: { accepted: true },
+        transactionOptions: { useTransaction: false },
       });
     }
 
