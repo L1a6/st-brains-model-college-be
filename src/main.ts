@@ -65,7 +65,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(loggingInterceptor);
 
   const isDev = configService.get<boolean>('isDev');
-  const port = configService.get<string>('port');
+  const port = Number(process.env.PORT ?? configService.get<string>('port') ?? 3000);
   const env = configService.get<string>('env');
   const appName = configService.get<string>('app.name');
 
@@ -77,7 +77,7 @@ async function bootstrap() {
   // Get the Winston logger to use after startup
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
   logger.log(
     `

@@ -12,6 +12,7 @@ import { DataSource, Like } from 'typeorm';
 import { Logger } from 'winston';
 
 import { AcademicSessionModelAction } from 'src/modules/academic-session/model-actions/academic-session-actions';
+import { SessionStatus } from 'src/modules/academic-session/entities/academic-session.entity';
 import { ClassStudentModelAction } from 'src/modules/class/model-actions/class-student.action';
 import { ClassModelAction } from 'src/modules/class/model-actions/class.actions';
 
@@ -428,20 +429,36 @@ export class StudentService {
   //student growth api
 
   async getStudentGrowthReport(
-    academicYear: string,
+    academicYear?: string,
   ): Promise<StudentGrowthReportResponseDto> {
-    // --- 1. Find academic session ---
-    const academicSessionResponse = await this.academicSessionModelAction.find({
-      findOptions: { name: academicYear },
-      transactionOptions: { useTransaction: false },
-    });
+    const normalizedAcademicYear = academicYear?.trim();
 
-    const academicSession = academicSessionResponse.payload?.[0];
+    // --- 1. Resolve academic session (explicit year first, else active session) ---
+    const academicSession = normalizedAcademicYear
+      ? (
+          await this.academicSessionModelAction.find({
+            findOptions: { name: normalizedAcademicYear },
+            transactionOptions: { useTransaction: false },
+          })
+        ).payload?.[0]
+      : (
+          await this.academicSessionModelAction.list({
+            filterRecordOptions: { status: SessionStatus.ACTIVE },
+            paginationPayload: { page: 1, limit: 1 },
+          })
+        ).payload?.[0];
 
     if (!academicSession) {
-      this.logger.warn(`Academic session not found: ${academicYear}`);
+      if (normalizedAcademicYear) {
+        this.logger.warn(`Academic session not found: ${normalizedAcademicYear}`);
+      } else {
+        this.logger.warn('No active academic session found for student growth report');
+      }
       throw new NotFoundException(sysMsg.RESOURCE_NOT_FOUND);
     }
+
+    const resolvedAcademicYear =
+      academicSession.name || academicSession.academicYear || normalizedAcademicYear || '';
 
     // --- 2. Get classes under session ---
     const classesResponse = await this.classModelAction.find({
@@ -456,7 +473,7 @@ export class StudentService {
         message: sysMsg.OPERATION_SUCCESSFUL,
         status_code: HttpStatus.OK,
         data: {
-          academic_year: academicYear,
+          academic_year: resolvedAcademicYear,
           report: [],
         },
       };
@@ -491,7 +508,7 @@ export class StudentService {
     );
 
     this.logger.info('Generated student growth report', {
-      academicYear,
+      academicYear: resolvedAcademicYear,
       classCount: report.length,
     });
 
@@ -532,7 +549,7 @@ export class StudentService {
       message: sysMsg.OPERATION_SUCCESSFUL,
       status_code: HttpStatus.OK,
       data: {
-        academic_year: academicYear,
+        academic_year: resolvedAcademicYear,
         report: aggregatedReport,
       },
     };
