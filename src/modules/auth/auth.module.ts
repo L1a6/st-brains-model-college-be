@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EmailModule } from '../email/email.module';
+import { InviteModule } from '../invites/invites.module';
 import { Parent } from '../parent/entities/parent.entity';
 import { SessionModule } from '../session/session.module';
 import { Student } from '../student/entities/student.entity';
@@ -21,6 +22,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     UserModule,
     EmailModule,
+    InviteModule,
     SessionModule,
     PassportModule,
     TypeOrmModule.forFeature([Teacher, Student, Parent]),
