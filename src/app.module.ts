@@ -51,6 +51,7 @@ import { UserModule } from './modules/user/user.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
+        url: config.get<string>('DATABASE_URL'),
         host: config.get<string>('DB_HOST'),
         port: config.get<number>('DB_PORT'),
         username: config.get<string>('DB_USER'),
@@ -60,7 +61,8 @@ import { UserModule } from './modules/user/user.module';
         migrationsRun: false,
         synchronize: true,
         ssl:
-          config.get<string>('DB_SSL') === 'true'
+          config.get<string>('DB_SSL') === 'true' ||
+          Boolean(config.get<string>('DATABASE_URL'))
             ? { rejectUnauthorized: false }
             : false,
       }),
