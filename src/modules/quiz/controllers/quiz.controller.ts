@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from '@nestjs/common'
-import { QuizService } from './services/quiz.service'
-import { CreateQuizDto, UpdateQuizDto, SubmitQuizDto } from './dto/create-quiz.dto'
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
-import { RoleGuard } from '../../common/guards/role.guard'
-import { Roles } from '../../common/decorators/roles.decorator'
+import { Roles } from '../../../modules/auth/decorators/roles.decorator'
+import { JwtAuthGuard } from '../../../modules/auth/guards/jwt-auth.guard'
+import { RolesGuard } from '../../../modules/auth/guards/roles.guard'
+import { CreateQuizDto, UpdateQuizDto, SubmitQuizDto } from '../dto/create-quiz.dto'
+import { QuizService } from '../services/quiz.service'
 
-interface RequestWithUser extends Request {
+interface IRequestWithUser extends Request {
   user?: {
     sub: string
     email: string
@@ -24,10 +24,7 @@ export class QuizController {
    */
   @Get('student/:studentId')
   @UseGuards(JwtAuthGuard)
-  async getStudentQuizzes(
-    @Param('studentId') studentId: string,
-    @Req() req: RequestWithUser
-  ) {
+  async getStudentQuizzes(@Param('studentId') studentId: string) {
     // TODO: Fetch student's class_id from database
     // For now, we'll assume it's passed in query params or from student record
     const classId = 'class-123' // This should come from student record
@@ -69,9 +66,9 @@ export class QuizController {
    * Create a new quiz (Teachers only)
    */
   @Post()
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('TEACHER', 'ADMIN')
-  async createQuiz(@Body() createQuizDto: CreateQuizDto, @Req() req: RequestWithUser) {
+  async createQuiz(@Body() createQuizDto: CreateQuizDto, @Req() req: IRequestWithUser) {
     const teacherId = req.user?.teacher_id || req.user?.sub
     const data = await this.quizService.createQuiz(teacherId, createQuizDto)
     return {
@@ -86,7 +83,7 @@ export class QuizController {
    * Update a quiz (Teachers only)
    */
   @Put(':quizId')
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('TEACHER', 'ADMIN')
   async updateQuiz(@Param('quizId') quizId: string, @Body() updateQuizDto: UpdateQuizDto) {
     const data = await this.quizService.updateQuiz(quizId, updateQuizDto)
@@ -102,7 +99,7 @@ export class QuizController {
    * Delete a quiz (Teachers only)
    */
   @Delete(':quizId')
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('TEACHER', 'ADMIN')
   async deleteQuiz(@Param('quizId') quizId: string) {
     const data = await this.quizService.deleteQuiz(quizId)
