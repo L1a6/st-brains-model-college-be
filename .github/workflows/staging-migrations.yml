@@ -5,6 +5,9 @@ on:
     branches:
       - "staging"
 
+permissions:
+  contents: read
+
 jobs:
   migrate-and-seed:
     runs-on: ubuntu-latest
