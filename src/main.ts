@@ -5,7 +5,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 import { AppModule } from './app.module';
-import { LoggingInterceptor } from './middleware/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -59,10 +58,6 @@ async function bootstrap() {
 
   // Use Winston logger globally
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-
-  // Inject your LoggingInterceptor
-  const loggingInterceptor = app.get(LoggingInterceptor);
-  app.useGlobalInterceptors(loggingInterceptor);
 
   const isDev = configService.get<boolean>('isDev');
   const port = Number(
