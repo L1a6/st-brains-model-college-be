@@ -38,6 +38,7 @@ export default () => ({
   },
 
   database: {
+    url: process.env.DATABASE_URL,
     host: useLocalDatabaseFallback() ? 'localhost' : process.env.DB_HOST,
     port: useLocalDatabaseFallback() ? 5433 : parseInt(process.env.DB_PORT, 10),
     user: useLocalDatabaseFallback() ? 'postgres' : process.env.DB_USER,
