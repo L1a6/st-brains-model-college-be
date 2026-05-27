@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { CreateQuizDto, UpdateQuizDto, SubmitQuizDto } from '../dto/create-quiz.dto'
 import { QuizQuestion } from '../entities/quiz-question.entity'
 import { QuizSubmission } from '../entities/quiz-submission.entity'
@@ -30,18 +30,20 @@ export class QuizService {
         status: 'published',
       },
       relations: ['questions', 'teacher'],
-      order: { created_at: 'DESC' },
+      order: { createdAt: 'DESC' },
     })
 
     // Get student's submissions for these quizzes
-    const submissions = await this.submissionRepository.find({
-      where: {
-        student_id: studentId,
-        quiz: {
-          id: quizzes.map((q) => q.id),
-        },
-      },
-    })
+    const quizIds = quizzes.map((q) => q.id)
+    const submissions =
+      quizIds.length > 0
+        ? await this.submissionRepository.find({
+            where: {
+              student_id: studentId,
+              quiz_id: In(quizIds),
+            },
+          })
+        : []
 
     // Map submissions by quiz ID
     const submissionsMap = {}
@@ -78,8 +80,8 @@ export class QuizService {
         term_id: quiz.term_id,
         session_id: quiz.session_id,
         status: quiz.status,
-        createdAt: quiz.created_at.toISOString(),
-        updatedAt: quiz.updated_at.toISOString(),
+        createdAt: quiz.createdAt.toISOString(),
+        updatedAt: quiz.updatedAt.toISOString(),
       })),
       submissions: submissionsMap,
       total: quizzes.length,
@@ -121,8 +123,8 @@ export class QuizService {
       term_id: quiz.term_id,
       session_id: quiz.session_id,
       status: quiz.status,
-      createdAt: quiz.created_at.toISOString(),
-      updatedAt: quiz.updated_at.toISOString(),
+      createdAt: quiz.createdAt.toISOString(),
+      updatedAt: quiz.updatedAt.toISOString(),
     }
   }
 

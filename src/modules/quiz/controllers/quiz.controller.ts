@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from 
 import { Roles } from '../../../modules/auth/decorators/roles.decorator'
 import { JwtAuthGuard } from '../../../modules/auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../../../modules/auth/guards/roles.guard'
+import { UserRole } from '../../../modules/shared/enums'
 import { CreateQuizDto, UpdateQuizDto, SubmitQuizDto } from '../dto/create-quiz.dto'
 import { QuizService } from '../services/quiz.service'
 
@@ -67,7 +68,7 @@ export class QuizController {
    */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('TEACHER', 'ADMIN')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
   async createQuiz(@Body() createQuizDto: CreateQuizDto, @Req() req: IRequestWithUser) {
     const teacherId = req.user?.teacher_id || req.user?.sub
     const data = await this.quizService.createQuiz(teacherId, createQuizDto)
@@ -84,7 +85,7 @@ export class QuizController {
    */
   @Put(':quizId')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('TEACHER', 'ADMIN')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
   async updateQuiz(@Param('quizId') quizId: string, @Body() updateQuizDto: UpdateQuizDto) {
     const data = await this.quizService.updateQuiz(quizId, updateQuizDto)
     return {
@@ -100,7 +101,7 @@ export class QuizController {
    */
   @Delete(':quizId')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('TEACHER', 'ADMIN')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
   async deleteQuiz(@Param('quizId') quizId: string) {
     const data = await this.quizService.deleteQuiz(quizId)
     return {
