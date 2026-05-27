@@ -65,8 +65,15 @@ async function bootstrap() {
   app.useGlobalInterceptors(loggingInterceptor);
 
   const isDev = configService.get<boolean>('isDev');
-  const port = Number(configService.get<string>('PORT') ?? configService.get<string>('port') ?? '3000');
-  const env = configService.get<string>('env') ?? configService.get<string>('NODE_ENV') ?? 'development';
+  const port = Number(
+    configService.get<string>('PORT') ??
+      configService.get<string>('port') ??
+      '3000',
+  );
+  const env =
+    configService.get<string>('env') ??
+    configService.get<string>('NODE_ENV') ??
+    'development';
   const appName = configService.get<string>('app.name');
 
   if (isDev) {

@@ -6,12 +6,13 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { pictureUploadConfig } from './multer.config';
 import {
   ApiUploadTags,
   ApiUploadBearerAuth,
   ApiUploadPicture,
 } from '../docs/upload.swagger';
+
+import { pictureUploadConfig } from './multer.config';
 
 /**
  * Decorators for Upload module

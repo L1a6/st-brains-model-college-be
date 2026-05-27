@@ -146,11 +146,17 @@ export class AddAttendanceAutoLock1764500000000 implements MigrationInterface {
     `);
 
     // Drop indexes
-    await queryRunner.query('DROP INDEX IF EXISTS "IDX_attendance_edit_requests_status"');
+    await queryRunner.query(
+      'DROP INDEX IF EXISTS "IDX_attendance_edit_requests_status"',
+    );
 
-    await queryRunner.query('DROP INDEX IF EXISTS "IDX_attendance_edit_requests_requested_by"');
+    await queryRunner.query(
+      'DROP INDEX IF EXISTS "IDX_attendance_edit_requests_requested_by"',
+    );
 
-    await queryRunner.query('DROP INDEX IF EXISTS "IDX_attendance_edit_requests_attendance"');
+    await queryRunner.query(
+      'DROP INDEX IF EXISTS "IDX_attendance_edit_requests_attendance"',
+    );
 
     // Drop table
     await queryRunner.query('DROP TABLE IF EXISTS "attendance_edit_requests"');

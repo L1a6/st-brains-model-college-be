@@ -19,10 +19,7 @@ export class ContactController {
   @Get('enrollments')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  listEnrollments(
-    @Query('page') page = '1',
-    @Query('limit') limit = '20',
-  ) {
+  listEnrollments(@Query('page') page = '1', @Query('limit') limit = '20') {
     return this.contactService.findAll({ page, limit });
   }
 

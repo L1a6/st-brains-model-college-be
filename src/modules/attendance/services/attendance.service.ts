@@ -16,8 +16,8 @@ import { TermName } from '../../academic-term/entities/term.entity';
 import { TermModelAction } from '../../academic-term/model-actions';
 import { ClassStudent } from '../../class/entities/class-student.entity';
 import { ClassTeacher } from '../../class/entities/class-teacher.entity';
-import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Student } from '../../student/entities/student.entity';
+import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Schedule } from '../../timetable/entities/schedule.entity';
 import { DayOfWeek } from '../../timetable/enums/timetable.enums';
 import {

@@ -33,7 +33,10 @@ export class ContactService {
 
   async findAll(options: { page?: string; limit?: string }) {
     const page = Math.max(parseInt(options.page ?? '1', 10) || 1, 1);
-    const limit = Math.min(Math.max(parseInt(options.limit ?? '20', 10) || 20, 1), 100);
+    const limit = Math.min(
+      Math.max(parseInt(options.limit ?? '20', 10) || 20, 1),
+      100,
+    );
     const skip = (page - 1) * limit;
 
     const [contacts, total] = await this.contactRepository

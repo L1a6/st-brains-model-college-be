@@ -1,9 +1,8 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
+import { BaseEntity } from '../../../entities/base-entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { User } from '../../user/entities/user.entity';
-
-import { BaseEntity } from '../../../entities/base-entity';
 import { TeacherManualCheckinStatusEnum } from '../enums';
 
 @Entity('teacher_manual_checkins')

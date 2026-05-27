@@ -1,18 +1,33 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from '@nestjs/common'
-import { Roles } from '../../../modules/auth/decorators/roles.decorator'
-import { JwtAuthGuard } from '../../../modules/auth/guards/jwt-auth.guard'
-import { RolesGuard } from '../../../modules/auth/guards/roles.guard'
-import { UserRole } from '../../../modules/shared/enums'
-import { CreateQuizDto, UpdateQuizDto, SubmitQuizDto } from '../dto/create-quiz.dto'
-import { QuizService } from '../services/quiz.service'
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
+
+import { Roles } from '../../../modules/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../../modules/auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../modules/auth/guards/roles.guard';
+import { UserRole } from '../../../modules/shared/enums';
+import {
+  CreateQuizDto,
+  UpdateQuizDto,
+  SubmitQuizDto,
+} from '../dto/create-quiz.dto';
+import { QuizService } from '../services/quiz.service';
 
 interface IRequestWithUser extends Request {
   user?: {
-    sub: string
-    email: string
-    role: string[]
-    teacher_id?: string
-  }
+    sub: string;
+    email: string;
+    role: string[];
+    teacher_id?: string;
+  };
 }
 
 @Controller('quizzes')
@@ -28,16 +43,21 @@ export class QuizController {
   async getStudentQuizzes(@Param('studentId') studentId: string) {
     // TODO: Fetch student's class_id from database
     // For now, we'll assume it's passed in query params or from student record
-    const classId = 'class-123' // This should come from student record
-    const termId = 'term-id'
-    const sessionId = 'session-id'
+    const classId = 'class-123'; // This should come from student record
+    const termId = 'term-id';
+    const sessionId = 'session-id';
 
-    const data = await this.quizService.getStudentQuizzes(studentId, classId, termId, sessionId)
+    const data = await this.quizService.getStudentQuizzes(
+      studentId,
+      classId,
+      termId,
+      sessionId,
+    );
     return {
       status_code: 200,
       message: null,
       data,
-    }
+    };
   }
 
   /**
@@ -47,19 +67,19 @@ export class QuizController {
   @Get(':quizId')
   @UseGuards(JwtAuthGuard)
   async getQuiz(@Param('quizId') quizId: string) {
-    const data = await this.quizService.getQuiz(quizId)
+    const data = await this.quizService.getQuiz(quizId);
     if (!data) {
       return {
         status_code: 404,
         message: 'Quiz not found',
         data: null,
-      }
+      };
     }
     return {
       status_code: 200,
       message: null,
       data,
-    }
+    };
   }
 
   /**
@@ -69,14 +89,17 @@ export class QuizController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
-  async createQuiz(@Body() createQuizDto: CreateQuizDto, @Req() req: IRequestWithUser) {
-    const teacherId = req.user?.teacher_id || req.user?.sub
-    const data = await this.quizService.createQuiz(teacherId, createQuizDto)
+  async createQuiz(
+    @Body() createQuizDto: CreateQuizDto,
+    @Req() req: IRequestWithUser,
+  ) {
+    const teacherId = req.user?.teacher_id || req.user?.sub;
+    const data = await this.quizService.createQuiz(teacherId, createQuizDto);
     return {
       status_code: 201,
       message: 'Quiz created successfully',
       data,
-    }
+    };
   }
 
   /**
@@ -86,13 +109,16 @@ export class QuizController {
   @Put(':quizId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
-  async updateQuiz(@Param('quizId') quizId: string, @Body() updateQuizDto: UpdateQuizDto) {
-    const data = await this.quizService.updateQuiz(quizId, updateQuizDto)
+  async updateQuiz(
+    @Param('quizId') quizId: string,
+    @Body() updateQuizDto: UpdateQuizDto,
+  ) {
+    const data = await this.quizService.updateQuiz(quizId, updateQuizDto);
     return {
       status_code: 200,
       message: 'Quiz updated successfully',
       data,
-    }
+    };
   }
 
   /**
@@ -103,12 +129,12 @@ export class QuizController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   async deleteQuiz(@Param('quizId') quizId: string) {
-    const data = await this.quizService.deleteQuiz(quizId)
+    const data = await this.quizService.deleteQuiz(quizId);
     return {
       status_code: 200,
       message: 'Quiz deleted successfully',
       data,
-    }
+    };
   }
 
   /**
@@ -118,12 +144,12 @@ export class QuizController {
   @Post('submissions')
   @UseGuards(JwtAuthGuard)
   async submitQuiz(@Body() submitQuizDto: SubmitQuizDto) {
-    const data = await this.quizService.submitQuiz(submitQuizDto)
+    const data = await this.quizService.submitQuiz(submitQuizDto);
     return {
       status_code: 201,
       message: 'Quiz submitted successfully',
       data,
-    }
+    };
   }
 
   /**
@@ -133,19 +159,19 @@ export class QuizController {
   @Get('submissions/:submissionId')
   @UseGuards(JwtAuthGuard)
   async getSubmission(@Param('submissionId') submissionId: string) {
-    const data = await this.quizService.getSubmission(submissionId)
+    const data = await this.quizService.getSubmission(submissionId);
     if (!data) {
       return {
         status_code: 404,
         message: 'Submission not found',
         data: null,
-      }
+      };
     }
     return {
       status_code: 200,
       message: null,
       data,
-    }
+    };
   }
 
   /**
@@ -155,11 +181,11 @@ export class QuizController {
   @Get('submissions/student/:studentId')
   @UseGuards(JwtAuthGuard)
   async getStudentSubmissions(@Param('studentId') studentId: string) {
-    const data = await this.quizService.getStudentSubmissions(studentId)
+    const data = await this.quizService.getStudentSubmissions(studentId);
     return {
       status_code: 200,
       message: null,
       data,
-    }
+    };
   }
 }

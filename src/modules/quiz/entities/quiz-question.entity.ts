@@ -1,14 +1,10 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-import { BaseEntity } from '../../../entities/base-entity'
-import { Quiz } from './quiz.entity'
+import { BaseEntity } from '../../../entities/base-entity';
 
-export type QuestionType = 'multiple_choice' | 'short_answer' | 'true_false'
+import { Quiz } from './quiz.entity';
+
+export type QuestionType = 'multiple_choice' | 'short_answer' | 'true_false';
 
 /**
  * QuizQuestion Entity
@@ -18,36 +14,43 @@ export type QuestionType = 'multiple_choice' | 'short_answer' | 'true_false'
 @Entity('quiz_questions')
 export class QuizQuestion extends BaseEntity {
   @Column({ name: 'quiz_id', type: 'uuid' })
-  quiz_id: string
+  quiz_id: string;
 
-  @ManyToOne(() => Quiz, (q) => q.questions, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => Quiz, (q) => q.questions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'quiz_id' })
-  quiz: Quiz
+  quiz: Quiz;
 
   @Column({ type: 'int' })
-  question_order: number
+  question_order: number;
 
   @Column({ type: 'text' })
-  text: string
+  text: string;
 
   @Column({ type: 'varchar', length: 50 })
-  type: QuestionType
+  type: QuestionType;
 
   @Column({ type: 'simple-array', nullable: true })
-  options?: string[] // for multiple choice and true/false
+  options?: string[]; // for multiple choice and true/false
 
   @Column({ type: 'text' })
-  correct_answer: string
+  correct_answer: string;
 
   @Column({ type: 'int', default: 1 })
-  points: number
+  points: number;
 
   @Column({ type: 'text', nullable: true })
-  explanation?: string
+  explanation?: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date
+  created_at: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updated_at: Date
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updated_at: Date;
 }

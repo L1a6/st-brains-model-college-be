@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { In, Repository } from 'typeorm'
-import { CreateQuizDto, UpdateQuizDto, SubmitQuizDto } from '../dto/create-quiz.dto'
-import { QuizQuestion } from '../entities/quiz-question.entity'
-import { QuizSubmission } from '../entities/quiz-submission.entity'
-import { Quiz } from '../entities/quiz.entity'
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
+
+import {
+  CreateQuizDto,
+  UpdateQuizDto,
+  SubmitQuizDto,
+} from '../dto/create-quiz.dto';
+import { QuizQuestion } from '../entities/quiz-question.entity';
+import { QuizSubmission } from '../entities/quiz-submission.entity';
+import { Quiz } from '../entities/quiz.entity';
 
 @Injectable()
 export class QuizService {
@@ -20,7 +25,12 @@ export class QuizService {
   /**
    * Get all quizzes for a specific student's class
    */
-  async getStudentQuizzes(studentId: string, classId: string, termId: string, sessionId: string) {
+  async getStudentQuizzes(
+    studentId: string,
+    classId: string,
+    termId: string,
+    sessionId: string,
+  ) {
     // Get all published quizzes for the class
     const quizzes = await this.quizRepository.find({
       where: {
@@ -31,10 +41,10 @@ export class QuizService {
       },
       relations: ['questions', 'teacher'],
       order: { createdAt: 'DESC' },
-    })
+    });
 
     // Get student's submissions for these quizzes
-    const quizIds = quizzes.map((q) => q.id)
+    const quizIds = quizzes.map((q) => q.id);
     const submissions =
       quizIds.length > 0
         ? await this.submissionRepository.find({
@@ -43,10 +53,10 @@ export class QuizService {
               quiz_id: In(quizIds),
             },
           })
-        : []
+        : [];
 
     // Map submissions by quiz ID
-    const submissionsMap = {}
+    const submissionsMap = {};
     submissions.forEach((sub) => {
       submissionsMap[sub.quiz_id] = {
         id: sub.id,
@@ -54,8 +64,8 @@ export class QuizService {
         maxScore: sub.max_score,
         submittedAt: sub.submitted_at,
         status: sub.status,
-      }
-    })
+      };
+    });
 
     return {
       quizzes: quizzes.map((quiz) => ({
@@ -85,7 +95,7 @@ export class QuizService {
       })),
       submissions: submissionsMap,
       total: quizzes.length,
-    }
+    };
   }
 
   /**
@@ -95,10 +105,10 @@ export class QuizService {
     const quiz = await this.quizRepository.findOne({
       where: { id: quizId },
       relations: ['questions', 'teacher'],
-    })
+    });
 
     if (!quiz) {
-      return null
+      return null;
     }
 
     return {
@@ -125,7 +135,7 @@ export class QuizService {
       status: quiz.status,
       createdAt: quiz.createdAt.toISOString(),
       updatedAt: quiz.updatedAt.toISOString(),
-    }
+    };
   }
 
   /**
@@ -144,9 +154,9 @@ export class QuizService {
       time_limit_minutes: createQuizDto.time_limit_minutes || 30,
       status: createQuizDto.status || 'draft',
       questions: [],
-    })
+    });
 
-    const savedQuiz = await this.quizRepository.save(quiz)
+    const savedQuiz = await this.quizRepository.save(quiz);
 
     // Create questions
     const questions = createQuizDto.questions.map((q, idx) =>
@@ -159,12 +169,12 @@ export class QuizService {
         correct_answer: q.correct_answer,
         points: q.points || 1,
         explanation: q.explanation,
-      })
-    )
+      }),
+    );
 
-    await this.questionRepository.save(questions)
+    await this.questionRepository.save(questions);
 
-    return this.getQuiz(savedQuiz.id)
+    return this.getQuiz(savedQuiz.id);
   }
 
   /**
@@ -174,15 +184,17 @@ export class QuizService {
     await this.quizRepository.update(quizId, {
       title: updateQuizDto.title,
       description: updateQuizDto.description,
-      due_date: updateQuizDto.due_date ? new Date(updateQuizDto.due_date) : undefined,
+      due_date: updateQuizDto.due_date
+        ? new Date(updateQuizDto.due_date)
+        : undefined,
       time_limit_minutes: updateQuizDto.time_limit_minutes,
       status: updateQuizDto.status,
-    })
+    });
 
     // If questions are provided, update them
     if (updateQuizDto.questions && updateQuizDto.questions.length > 0) {
       // Delete old questions
-      await this.questionRepository.delete({ quiz_id: quizId })
+      await this.questionRepository.delete({ quiz_id: quizId });
 
       // Create new questions
       const questions = updateQuizDto.questions.map((q, idx) =>
@@ -195,13 +207,13 @@ export class QuizService {
           correct_answer: q.correct_answer,
           points: q.points || 1,
           explanation: q.explanation,
-        })
-      )
+        }),
+      );
 
-      await this.questionRepository.save(questions)
+      await this.questionRepository.save(questions);
     }
 
-    return this.getQuiz(quizId)
+    return this.getQuiz(quizId);
   }
 
   /**
@@ -212,24 +224,24 @@ export class QuizService {
     const quiz = await this.quizRepository.findOne({
       where: { id: submitDto.quiz_id },
       relations: ['questions'],
-    })
+    });
 
     if (!quiz) {
-      throw new Error('Quiz not found')
+      throw new Error('Quiz not found');
     }
 
     // Calculate score
-    let score = 0
-    const maxScore = quiz.questions.reduce((sum, q) => sum + q.points, 0)
+    let score = 0;
+    const maxScore = quiz.questions.reduce((sum, q) => sum + q.points, 0);
 
     quiz.questions.forEach((question) => {
-      const answer = (submitDto.answers[question.id] || '').trim()
-      const correctAnswer = (question.correct_answer || '').trim()
+      const answer = (submitDto.answers[question.id] || '').trim();
+      const correctAnswer = (question.correct_answer || '').trim();
 
       if (answer.toLowerCase() === correctAnswer.toLowerCase()) {
-        score += question.points
+        score += question.points;
       }
-    })
+    });
 
     // Create submission record
     let submission = await this.submissionRepository.findOne({
@@ -237,36 +249,38 @@ export class QuizService {
         quiz_id: submitDto.quiz_id,
         student_id: submitDto.student_id,
       },
-    })
+    });
 
     if (!submission) {
       submission = this.submissionRepository.create({
         quiz_id: submitDto.quiz_id,
         student_id: submitDto.student_id,
-      })
+      });
     }
 
-    submission.answers = submitDto.answers
-    submission.score = score
-    submission.max_score = maxScore
-    submission.status = 'submitted'
-    submission.submitted_at = new Date()
-    submission.time_spent_seconds = submitDto.time_spent_seconds || 0
+    submission.answers = submitDto.answers;
+    submission.score = score;
+    submission.max_score = maxScore;
+    submission.status = 'submitted';
+    submission.submitted_at = new Date();
+    submission.time_spent_seconds = submitDto.time_spent_seconds || 0;
 
-    await this.submissionRepository.save(submission)
+    await this.submissionRepository.save(submission);
 
     // Update total submissions count
     const submissionCount = await this.submissionRepository.count({
       where: { quiz_id: submitDto.quiz_id },
-    })
-    await this.quizRepository.update(submitDto.quiz_id, { total_submissions: submissionCount })
+    });
+    await this.quizRepository.update(submitDto.quiz_id, {
+      total_submissions: submissionCount,
+    });
 
     return {
       id: submission.id,
       score,
       maxScore,
       percentage: Math.round((score / Math.max(maxScore, 1)) * 100),
-    }
+    };
   }
 
   /**
@@ -276,10 +290,10 @@ export class QuizService {
     const submission = await this.submissionRepository.findOne({
       where: { id: submissionId },
       relations: ['quiz', 'student'],
-    })
+    });
 
     if (!submission) {
-      return null
+      return null;
     }
 
     return {
@@ -292,7 +306,7 @@ export class QuizService {
       status: submission.status,
       submittedAt: submission.submitted_at?.toISOString(),
       feedback: submission.feedback,
-    }
+    };
   }
 
   /**
@@ -303,7 +317,7 @@ export class QuizService {
       where: { student_id: studentId },
       relations: ['quiz'],
       order: { submitted_at: 'DESC' },
-    })
+    });
 
     return {
       submissions: submissions.map((sub) => ({
@@ -315,16 +329,16 @@ export class QuizService {
         status: sub.status,
       })),
       total: submissions.length,
-    }
+    };
   }
 
   /**
    * Delete a quiz
    */
   async deleteQuiz(quizId: string) {
-    await this.submissionRepository.delete({ quiz_id: quizId })
-    await this.questionRepository.delete({ quiz_id: quizId })
-    await this.quizRepository.delete({ id: quizId })
-    return { message: 'Quiz deleted successfully' }
+    await this.submissionRepository.delete({ quiz_id: quizId });
+    await this.questionRepository.delete({ quiz_id: quizId });
+    await this.quizRepository.delete({ id: quizId });
+    return { message: 'Quiz deleted successfully' };
   }
 }

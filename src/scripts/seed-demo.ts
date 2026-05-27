@@ -1,7 +1,9 @@
 import 'reflect-metadata';
 
-import * as bcrypt from 'bcrypt';
+import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import * as bcrypt from 'bcrypt';
 import { DataSource, Repository } from 'typeorm';
 
 import { AppModule } from '../app.module';
@@ -9,32 +11,36 @@ import {
   AcademicSession,
   SessionStatus,
 } from '../modules/academic-session/entities/academic-session.entity';
-import { Term, TermName, TermStatus } from '../modules/academic-term/entities/term.entity';
-import { Class } from '../modules/class/entities/class.entity';
+import {
+  Term,
+  TermName,
+  TermStatus,
+} from '../modules/academic-term/entities/term.entity';
 import { ClassStudent } from '../modules/class/entities/class-student.entity';
 import { ClassSubject } from '../modules/class/entities/class-subject.entity';
 import { ClassTeacher } from '../modules/class/entities/class-teacher.entity';
+import { Class } from '../modules/class/entities/class.entity';
 import { Fees } from '../modules/fees/entities/fees.entity';
 import { FeeStatus } from '../modules/fees/enums/fees.enums';
+import { Parent } from '../modules/parent/entities/parent.entity';
+import { Payment } from '../modules/payment/entities/payment.entity';
 import {
   PaymentMethod,
   PaymentStatus,
 } from '../modules/payment/enums/payment.enums';
-import { Payment } from '../modules/payment/entities/payment.entity';
-import { Parent } from '../modules/parent/entities/parent.entity';
-import { Result } from '../modules/result/entities/result.entity';
 import { ResultSubjectLine } from '../modules/result/entities/result-subject-line.entity';
+import { Result } from '../modules/result/entities/result.entity';
 import { School } from '../modules/school/entities/school.entity';
 import { Stream } from '../modules/stream/entities/stream.entity';
 import { Student } from '../modules/student/entities/student.entity';
 import { Subject } from '../modules/subject/entities/subject.entity';
-import { Role, SuperAdmin } from '../modules/superadmin/entities/superadmin.entity';
-import { TeacherTitle } from '../modules/teacher/enums/teacher.enum';
+import {
+  Role,
+  SuperAdmin,
+} from '../modules/superadmin/entities/superadmin.entity';
 import { Teacher } from '../modules/teacher/entities/teacher.entity';
+import { TeacherTitle } from '../modules/teacher/enums/teacher.enum';
 import { User, UserRole } from '../modules/user/entities/user.entity';
-
-import { ConfigService } from '@nestjs/config';
-import { Logger } from '@nestjs/common';
 
 const config = new ConfigService();
 const DEMO_PASSWORD = config.get<string>('DEMO_PASSWORD') ?? 'DemoPass123!';
@@ -112,7 +118,9 @@ async function run() {
       const resultRepo = manager.getRepository(Result);
       const resultLineRepo = manager.getRepository(ResultSubjectLine);
 
-      let school = await schoolRepo.findOne({ where: { name: "St. Brian's Model College" } });
+      let school = await schoolRepo.findOne({
+        where: { name: "St. Brian's Model College" },
+      });
       if (!school) {
         school = schoolRepo.create({
           name: "St. Brian's Model College",
@@ -489,7 +497,8 @@ async function run() {
 }
 
 run().catch((error: unknown) => {
-  const errMsg = error instanceof Error ? error.stack ?? error.message : String(error);
+  const errMsg =
+    error instanceof Error ? (error.stack ?? error.message) : String(error);
   logger.error(`Demo seed failed: ${errMsg}`);
   process.exit(1);
 });

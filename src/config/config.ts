@@ -1,31 +1,31 @@
 /* eslint-disable no-restricted-syntax */
 const isDevelopmentEnv = (): boolean => {
-  const env = process.env.NODE_ENV
-  return !env || ['development', 'localhost', 'local', 'dev'].includes(env)
-}
+  const env = process.env.NODE_ENV;
+  return !env || ['development', 'localhost', 'local', 'dev'].includes(env);
+};
 
 const useLocalDatabaseFallback = (): boolean => {
-  const host = process.env.DB_HOST || ''
-  const allowedHost = 'proxy.rlwy.net'
+  const host = process.env.DB_HOST || '';
+  const allowedHost = 'proxy.rlwy.net';
 
-  let normalizedHost = host.trim().toLowerCase()
+  let normalizedHost = host.trim().toLowerCase();
   try {
     if (normalizedHost.includes('://')) {
-      normalizedHost = new URL(normalizedHost).hostname.toLowerCase()
+      normalizedHost = new URL(normalizedHost).hostname.toLowerCase();
     } else {
-      normalizedHost = normalizedHost.split('/')[0].split(':')[0]
+      normalizedHost = normalizedHost.split('/')[0].split(':')[0];
     }
   } catch {
-    normalizedHost = ''
+    normalizedHost = '';
   }
 
-  normalizedHost = normalizedHost.replace(/\.$/, '')
+  normalizedHost = normalizedHost.replace(/\.$/, '');
   const isAllowedHost =
     normalizedHost === allowedHost ||
-    normalizedHost.endsWith(`.${allowedHost}`)
+    normalizedHost.endsWith(`.${allowedHost}`);
 
-  return isDevelopmentEnv() && (!normalizedHost || isAllowedHost)
-}
+  return isDevelopmentEnv() && (!normalizedHost || isAllowedHost);
+};
 
 export default () => ({
   env: process.env.NODE_ENV,
@@ -39,9 +39,7 @@ export default () => ({
 
   database: {
     host: useLocalDatabaseFallback() ? 'localhost' : process.env.DB_HOST,
-    port: useLocalDatabaseFallback()
-      ? 5433
-      : parseInt(process.env.DB_PORT, 10),
+    port: useLocalDatabaseFallback() ? 5433 : parseInt(process.env.DB_PORT, 10),
     user: useLocalDatabaseFallback() ? 'postgres' : process.env.DB_USER,
     pass: useLocalDatabaseFallback() ? 'postgres' : process.env.DB_PASS,
     name: useLocalDatabaseFallback()
