@@ -24,6 +24,7 @@ import { GradeModule } from './modules/grade/grade.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ParentModule } from './modules/parent/parent.module';
 import { PaymentModule } from './modules/payment/payment.module';
+import { QuizModule } from './modules/quiz/quiz.module';
 import { ResultModule } from './modules/result/result.module';
 import { RoomModule } from './modules/room/room.module';
 import { SchoolModule } from './modules/school/school.module';
@@ -37,6 +38,7 @@ import { TeacherSubjectModule } from './modules/teacher-subject/teacher-subject.
 import { TimetableModule } from './modules/timetable/timetable.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { UserModule } from './modules/user/user.module';
+
 @Module({
   imports: [
     LoggerModule,
@@ -44,7 +46,6 @@ import { UserModule } from './modules/user/user.module';
       isGlobal: true,
       load: [configuration],
     }),
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -69,7 +70,6 @@ import { UserModule } from './modules/user/user.module';
     EmailModule,
     SchoolModule,
     SessionModule,
-    AuthModule,
     TeachersModule,
     ParentModule,
     ClassModule,
@@ -91,20 +91,23 @@ import { UserModule } from './modules/user/user.module';
     ResultModule,
     SuperadminModule,
     PaymentModule,
-    ResultModule,
     NotificationModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    LoggingInterceptor,
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
     {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
   ],
 })
