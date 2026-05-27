@@ -1,110 +1,119 @@
-import { IsString, IsArray, IsNumber, IsOptional, ValidateNested, IsDateString, IsUUID, IsEnum } from 'class-validator'
-import { Type } from 'class-transformer'
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsArray,
+  IsNumber,
+  IsOptional,
+  ValidateNested,
+  IsDateString,
+  IsUUID,
+  IsEnum,
+} from 'class-validator';
 
-export type QuestionType = 'multiple_choice' | 'short_answer' | 'true_false'
-export type QuizStatus = 'draft' | 'published' | 'closed'
+export type QuestionType = 'multiple_choice' | 'short_answer' | 'true_false';
+export type QuizStatus = 'draft' | 'published' | 'closed';
 
 export class CreateQuestionDto {
   @IsString()
-  text: string
+  text: string;
 
   @IsEnum(['multiple_choice', 'short_answer', 'true_false'])
-  type: QuestionType
+  type: QuestionType;
 
   @IsArray()
   @IsOptional()
-  options?: string[]
+  options?: string[];
 
   @IsString()
-  correct_answer: string
+  correct_answer: string;
 
   @IsNumber()
   @IsOptional()
-  points?: number
+  points?: number;
 
   @IsString()
   @IsOptional()
-  explanation?: string
+  explanation?: string;
 }
 
 export class CreateQuizDto {
   @IsString()
-  title: string
+  title: string;
 
   @IsString()
   @IsOptional()
-  description?: string
+  description?: string;
 
   @IsUUID()
-  class_id: string
+  class_id: string;
 
   @IsUUID()
   @IsOptional()
-  subject_id?: string
+  subject_id?: string;
 
   @IsUUID()
-  term_id: string
+  term_id: string;
 
   @IsUUID()
-  session_id: string
+  session_id: string;
 
   @IsDateString()
-  due_date: string
+  due_date: string;
 
   @IsNumber()
   @IsOptional()
-  time_limit_minutes?: number
+  time_limit_minutes?: number;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateQuestionDto)
-  questions: CreateQuestionDto[]
+  questions: CreateQuestionDto[];
 
   @IsEnum(['draft', 'published', 'closed'])
   @IsOptional()
-  status?: QuizStatus
+  status?: QuizStatus;
 }
 
 export class UpdateQuizDto {
   @IsString()
   @IsOptional()
-  title?: string
+  title?: string;
 
   @IsString()
   @IsOptional()
-  description?: string
+  description?: string;
 
   @IsDateString()
   @IsOptional()
-  due_date?: string
+  due_date?: string;
 
   @IsNumber()
   @IsOptional()
-  time_limit_minutes?: number
+  time_limit_minutes?: number;
 
   @IsEnum(['draft', 'published', 'closed'])
   @IsOptional()
-  status?: QuizStatus
+  status?: QuizStatus;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateQuestionDto)
   @IsOptional()
-  questions?: CreateQuestionDto[]
+  questions?: CreateQuestionDto[];
 }
 
 export class SubmitQuizDto {
   @IsUUID()
-  quiz_id: string
+  quiz_id: string;
 
   @IsUUID()
-  student_id: string
+  student_id: string;
 
   @IsString()
   @Type(() => Object)
-  answers: Record<string, string>
+  answers: Record<string, string>;
 
   @IsNumber()
   @IsOptional()
-  time_spent_seconds?: number
+  time_spent_seconds?: number;
 }

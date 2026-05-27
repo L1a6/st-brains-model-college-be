@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
@@ -382,7 +382,7 @@ describe('ContactService', () => {
               full_name: 'Larry David',
               email: 'larry@example.com',
               phone: '+2348000000000',
-              school_name: 'St. Brian\'s Model College',
+              school_name: "St. Brian's Model College",
               message: 'I want to enroll my child.',
               status: ContactStatus.PENDING,
               created_at: new Date('2026-05-26T10:00:00Z'),
@@ -393,11 +393,15 @@ describe('ContactService', () => {
         ]),
       };
 
-      contactRepository.createQueryBuilder.mockReturnValue(queryBuilder as never);
+      contactRepository.createQueryBuilder.mockReturnValue(
+        queryBuilder as never,
+      );
 
       const result = await service.findAll({ page: '1', limit: '10' });
 
-      expect(contactRepository.createQueryBuilder).toHaveBeenCalledWith('contact');
+      expect(contactRepository.createQueryBuilder).toHaveBeenCalledWith(
+        'contact',
+      );
       expect(result.total).toBe(1);
       expect(result.data).toHaveLength(1);
       expect(result.data[0]).toEqual(

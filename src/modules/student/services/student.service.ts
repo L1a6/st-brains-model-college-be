@@ -11,8 +11,8 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource, Like } from 'typeorm';
 import { Logger } from 'winston';
 
-import { AcademicSessionModelAction } from 'src/modules/academic-session/model-actions/academic-session-actions';
 import { SessionStatus } from 'src/modules/academic-session/entities/academic-session.entity';
+import { AcademicSessionModelAction } from 'src/modules/academic-session/model-actions/academic-session-actions';
 import { ClassStudentModelAction } from 'src/modules/class/model-actions/class-student.action';
 import { ClassModelAction } from 'src/modules/class/model-actions/class.actions';
 
@@ -450,15 +450,22 @@ export class StudentService {
 
     if (!academicSession) {
       if (normalizedAcademicYear) {
-        this.logger.warn(`Academic session not found: ${normalizedAcademicYear}`);
+        this.logger.warn(
+          `Academic session not found: ${normalizedAcademicYear}`,
+        );
       } else {
-        this.logger.warn('No active academic session found for student growth report');
+        this.logger.warn(
+          'No active academic session found for student growth report',
+        );
       }
       throw new NotFoundException(sysMsg.RESOURCE_NOT_FOUND);
     }
 
     const resolvedAcademicYear =
-      academicSession.name || academicSession.academicYear || normalizedAcademicYear || '';
+      academicSession.name ||
+      academicSession.academicYear ||
+      normalizedAcademicYear ||
+      '';
 
     // --- 2. Get classes under session ---
     const classesResponse = await this.classModelAction.find({
