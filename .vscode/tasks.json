@@ -14,6 +14,21 @@
 				"$tsc"
 			],
 			"group": "build"
+		},
+		{
+			"label": "audit-fix-backend",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"audit",
+				"fix",
+				"--force"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
 		}
 	]
 }
