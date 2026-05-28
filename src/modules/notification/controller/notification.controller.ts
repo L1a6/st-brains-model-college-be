@@ -8,6 +8,7 @@ import {
   Param,
   Body,
   NotFoundException,
+  UnauthorizedException,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -32,6 +33,16 @@ import { NotificationService } from '../services/notification.service';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
+  private getAuthenticatedUserId(req: IRequestWithUser): string {
+    const userId = req?.user?.userId;
+
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    return userId;
+  }
+
   @Get('user')
   @SkipWrap()
   @ApiGetUserNotifications()
@@ -39,7 +50,7 @@ export class NotificationController {
     @Query() query: ListNotificationsQueryDto,
     @Req() req: IRequestWithUser,
   ) {
-    const userId = req.user.userId;
+    const userId = this.getAuthenticatedUserId(req);
 
     return this.notificationService.getUserNotifications(userId, query);
   }
@@ -50,7 +61,7 @@ export class NotificationController {
     @Body('is_read') isRead: boolean,
     @Req() req: IRequestWithUser,
   ) {
-    const userId = req.user.userId;
+    const userId = this.getAuthenticatedUserId(req);
     const updatedNotification =
       await this.notificationService.markNotificationAsReadUnread(
         notificationId,
@@ -75,7 +86,7 @@ export class NotificationController {
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req: IRequestWithUser,
   ) {
-    const userId = req.user.userId;
+    const userId = this.getAuthenticatedUserId(req);
 
     return this.notificationService.getNotificationById(id, userId);
   }
