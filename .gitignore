@@ -39,6 +39,12 @@ lerna-debug.log*
 
 # Environment variables
 .env
+.env.backup
+.env.backup.*
+.env.*.backup
 .env.setup.backup.*
+.env.local
+.env.*.local
+!.env.example
 logs/
 # package-lock.json (now tracked for CI)
