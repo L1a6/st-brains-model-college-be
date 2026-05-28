@@ -153,7 +153,15 @@ export class DatabaseService {
     if (fs.existsSync(envPath)) {
       fs.copyFileSync(envPath, `${envPath}.setup.backup.${Date.now()}`);
     }
-    const escapeEnvValue = (value: string) => JSON.stringify(value);
+    const escapeEnvValue = (value: string) => {
+      const needsQuotes = /[\s="\r\n#]/.test(value);
+
+      if (!needsQuotes) {
+        return value;
+      }
+
+      return JSON.stringify(value);
+    };
     try {
       // Read existing .env content if it exists
       let existingEnv = '';
@@ -191,7 +199,15 @@ SETUP_COMPLETED='true'`;
       fs.copyFileSync(envPath, `${envPath}.setup.backup.${Date.now()}`);
     }
 
-    const escapeEnvValue = (value: string) => JSON.stringify(value);
+    const escapeEnvValue = (value: string) => {
+      const needsQuotes = /[\s="\r\n#]/.test(value);
+
+      if (!needsQuotes) {
+        return value;
+      }
+
+      return JSON.stringify(value);
+    };
 
     try {
       const existingEnv = fs.readFileSync(envPath, 'utf8');
