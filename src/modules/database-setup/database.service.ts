@@ -154,10 +154,13 @@ export class DatabaseService {
       fs.copyFileSync(envPath, `${envPath}.setup.backup.${Date.now()}`);
     }
     const escapeEnvValue = (value: string) => {
-      if (value.includes(' ') || value.includes('=') || value.includes('"')) {
-        return `"${value.replace(/"/g, '\\"')}"`;
+      const needsQuotes = /[\s="\r\n#]/.test(value);
+
+      if (!needsQuotes) {
+        return value;
       }
-      return value;
+
+      return JSON.stringify(value);
     };
     try {
       // Read existing .env content if it exists
@@ -197,10 +200,13 @@ SETUP_COMPLETED='true'`;
     }
 
     const escapeEnvValue = (value: string) => {
-      if (value.includes(' ') || value.includes('=') || value.includes('"')) {
-        return `"${value.replace(/"/g, '\\"')}"`;
+      const needsQuotes = /[\s="\r\n#]/.test(value);
+
+      if (!needsQuotes) {
+        return value;
       }
-      return value;
+
+      return JSON.stringify(value);
     };
 
     try {

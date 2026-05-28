@@ -1,5 +1,15 @@
+import { randomInt } from 'crypto';
+
 export function generateTempPassword(): string {
-  return Math.random().toString(36).slice(-10);
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const passwordLength = 10;
+  let password = '';
+
+  for (let index = 0; index < passwordLength; index++) {
+    password += characters[randomInt(characters.length)];
+  }
+
+  return password;
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -14,20 +24,32 @@ export function generateStrongPassword(length: number = 12): string {
   const numbers = '0123456789';
   const allChars = uppercase + lowercase + numbers;
 
+  const getRandomChar = (characters: string) =>
+    characters[randomInt(characters.length)];
+
+  const shuffle = (characters: string[]) => {
+    for (let index = characters.length - 1; index > 0; index--) {
+      const swapIndex = randomInt(index + 1);
+      [characters[index], characters[swapIndex]] = [
+        characters[swapIndex],
+        characters[index],
+      ];
+    }
+
+    return characters;
+  };
+
   let password = '';
   // Ensure at least one character from each set
-  password += uppercase[Math.floor(Math.random() * uppercase.length)];
-  password += lowercase[Math.floor(Math.random() * lowercase.length)];
-  password += numbers[Math.floor(Math.random() * numbers.length)];
+  password += getRandomChar(uppercase);
+  password += getRandomChar(lowercase);
+  password += getRandomChar(numbers);
 
   // Fill the rest randomly
   for (let i = password.length; i < length; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)];
+    password += getRandomChar(allChars);
   }
 
-  // Shuffle the password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('');
+  // Shuffle the password with a cryptographically secure swap order
+  return shuffle(password.split('')).join('');
 }
