@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 
 import { RateLimit } from '../../common/decorators/rate-limit.decorator';
@@ -7,12 +6,6 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../user/entities/user.entity';
-=======
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-
-import { RateLimit } from '../../common/decorators/rate-limit.decorator';
-import { RateLimitGuard } from '../../common/guards/rate-limit.guard';
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 
 import { ContactService } from './contact.service';
 import { ApiContactTags, ApiCreateContact } from './docs/contact.swagger';
@@ -23,16 +16,12 @@ import { CreateContactDto } from './dto/create-contact.dto';
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
-<<<<<<< HEAD
   @Get('enrollments')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   listEnrollments(@Query('page') page = '1', @Query('limit') limit = '20') {
     return this.contactService.findAll({ page, limit });
   }
-
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   @Post()
   @UseGuards(RateLimitGuard)
   @RateLimit({ maxRequests: 3, windowMs: 15 * 60 * 1000 }) // 3 requests per 15 minutes

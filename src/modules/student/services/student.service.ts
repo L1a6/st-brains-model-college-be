@@ -11,10 +11,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource, Like } from 'typeorm';
 import { Logger } from 'winston';
 
-<<<<<<< HEAD
 import { SessionStatus } from 'src/modules/academic-session/entities/academic-session.entity';
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 import { AcademicSessionModelAction } from 'src/modules/academic-session/model-actions/academic-session-actions';
 import { ClassStudentModelAction } from 'src/modules/class/model-actions/class-student.action';
 import { ClassModelAction } from 'src/modules/class/model-actions/class.actions';
@@ -432,7 +429,6 @@ export class StudentService {
   //student growth api
 
   async getStudentGrowthReport(
-<<<<<<< HEAD
     academicYear?: string,
   ): Promise<StudentGrowthReportResponseDto> {
     const normalizedAcademicYear = academicYear?.trim();
@@ -470,24 +466,6 @@ export class StudentService {
       academicSession.academicYear ||
       normalizedAcademicYear ||
       '';
-
-=======
-    academicYear: string,
-  ): Promise<StudentGrowthReportResponseDto> {
-    // --- 1. Find academic session ---
-    const academicSessionResponse = await this.academicSessionModelAction.find({
-      findOptions: { name: academicYear },
-      transactionOptions: { useTransaction: false },
-    });
-
-    const academicSession = academicSessionResponse.payload?.[0];
-
-    if (!academicSession) {
-      this.logger.warn(`Academic session not found: ${academicYear}`);
-      throw new NotFoundException(sysMsg.RESOURCE_NOT_FOUND);
-    }
-
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
     // --- 2. Get classes under session ---
     const classesResponse = await this.classModelAction.find({
       findOptions: { academicSession: { id: academicSession.id } },
@@ -501,11 +479,7 @@ export class StudentService {
         message: sysMsg.OPERATION_SUCCESSFUL,
         status_code: HttpStatus.OK,
         data: {
-<<<<<<< HEAD
           academic_year: resolvedAcademicYear,
-=======
-          academic_year: academicYear,
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
           report: [],
         },
       };
@@ -540,11 +514,7 @@ export class StudentService {
     );
 
     this.logger.info('Generated student growth report', {
-<<<<<<< HEAD
       academicYear: resolvedAcademicYear,
-=======
-      academicYear,
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
       classCount: report.length,
     });
 
@@ -585,11 +555,7 @@ export class StudentService {
       message: sysMsg.OPERATION_SUCCESSFUL,
       status_code: HttpStatus.OK,
       data: {
-<<<<<<< HEAD
         academic_year: resolvedAcademicYear,
-=======
-        academic_year: academicYear,
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
         report: aggregatedReport,
       },
     };
