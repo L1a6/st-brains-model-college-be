@@ -135,7 +135,6 @@ export class QueryTimetableDto {
 }
 
 export class TimetableSubjectResponseDto {
-export class TimetableSubjectResponseDto {
   @ApiProperty({ description: 'Subject ID', example: 'uuid-string' })
   id: string;
 
