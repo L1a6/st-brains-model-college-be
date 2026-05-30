@@ -463,7 +463,10 @@ export class TeachersAttendanceService {
     const maxPastDays = 7; //todo: get from school settings when implemented
     const minDate = new Date(today);
     minDate.setDate(today.getDate() - maxPastDays);
-    if (checkInDate < minDate) {
+    if (
+      checkInDate.getFullYear() === today.getFullYear() &&
+      checkInDate < minDate
+    ) {
       throw new BadRequestException(
         sysMsg.CHECK_IN_DATE_CANNOT_BE_MORE_THAN_DAYS_IN_THE_PAST(maxPastDays),
       );
