@@ -8,10 +8,7 @@ import {
   Param,
   Body,
   NotFoundException,
-<<<<<<< HEAD
   UnauthorizedException,
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -36,7 +33,6 @@ import { NotificationService } from '../services/notification.service';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-<<<<<<< HEAD
   private getAuthenticatedUserId(req: IRequestWithUser): string {
     const userId = req?.user?.userId;
 
@@ -47,8 +43,6 @@ export class NotificationController {
     return userId;
   }
 
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   @Get('user')
   @SkipWrap()
   @ApiGetUserNotifications()
@@ -56,11 +50,7 @@ export class NotificationController {
     @Query() query: ListNotificationsQueryDto,
     @Req() req: IRequestWithUser,
   ) {
-<<<<<<< HEAD
     const userId = this.getAuthenticatedUserId(req);
-=======
-    const userId = req.user.userId;
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 
     return this.notificationService.getUserNotifications(userId, query);
   }
@@ -71,11 +61,7 @@ export class NotificationController {
     @Body('is_read') isRead: boolean,
     @Req() req: IRequestWithUser,
   ) {
-<<<<<<< HEAD
     const userId = this.getAuthenticatedUserId(req);
-=======
-    const userId = req.user.userId;
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
     const updatedNotification =
       await this.notificationService.markNotificationAsReadUnread(
         notificationId,
@@ -100,11 +86,7 @@ export class NotificationController {
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req: IRequestWithUser,
   ) {
-<<<<<<< HEAD
     const userId = this.getAuthenticatedUserId(req);
-=======
-    const userId = req.user.userId;
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 
     return this.notificationService.getNotificationById(id, userId);
   }

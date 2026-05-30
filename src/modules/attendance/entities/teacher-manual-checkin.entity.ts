@@ -1,15 +1,8 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
-<<<<<<< HEAD
 import { BaseEntity } from '../../../entities/base-entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { User } from '../../user/entities/user.entity';
-=======
-import { Teacher } from 'src/modules/teacher/entities/teacher.entity';
-import { User } from 'src/modules/user/entities/user.entity';
-
-import { BaseEntity } from '../../../entities/base-entity';
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 import { TeacherManualCheckinStatusEnum } from '../enums';
 
 @Entity('teacher_manual_checkins')

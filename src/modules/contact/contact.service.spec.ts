@@ -1,9 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-<<<<<<< HEAD
 import { getRepositoryToken } from '@nestjs/typeorm';
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
@@ -24,10 +21,7 @@ describe('ContactService', () => {
   let dataSource: jest.Mocked<DataSource>;
   let emailService: jest.Mocked<EmailService>;
   let logger: Logger;
-<<<<<<< HEAD
   let contactRepository: { createQueryBuilder: jest.Mock };
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 
   const mockCreateContactDto: CreateContactDto = {
     full_name: 'John Doe',
@@ -59,13 +53,9 @@ describe('ContactService', () => {
     transaction: jest.fn(),
   };
 
-<<<<<<< HEAD
   const mockContactRepository = {
     createQueryBuilder: jest.fn(),
   };
-
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   const mockContactModelAction = {
     create: jest.fn(),
   };
@@ -110,13 +100,10 @@ describe('ContactService', () => {
           provide: SpamDetectionService,
           useValue: mockSpamDetectionService,
         },
-<<<<<<< HEAD
         {
           provide: getRepositoryToken(Contact),
           useValue: mockContactRepository,
         },
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
       ],
     }).compile();
 
@@ -125,10 +112,7 @@ describe('ContactService', () => {
     dataSource = module.get(DataSource);
     emailService = module.get(EmailService);
     logger = module.get(WINSTON_MODULE_PROVIDER);
-<<<<<<< HEAD
     contactRepository = module.get(getRepositoryToken(Contact));
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   });
 
   afterEach(() => {
@@ -383,7 +367,6 @@ describe('ContactService', () => {
       });
     });
   });
-<<<<<<< HEAD
 
   describe('findAll', () => {
     it('should return paginated enrollments for admin dashboard', async () => {
@@ -429,6 +412,4 @@ describe('ContactService', () => {
       );
     });
   });
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 });

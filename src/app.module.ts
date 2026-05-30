@@ -50,6 +50,9 @@ import { WaitlistModule } from './modules/waitlist/waitlist.module';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
         host: config.get<string>('DB_HOST'),
         port: config.get<number>('DB_PORT'),
@@ -72,9 +75,6 @@ import { WaitlistModule } from './modules/waitlist/waitlist.module';
     EmailModule,
     SchoolModule,
     SessionModule,
-    TeachersModule,
-    ParentModule,
-    ClassModule,
     TeachersModule,
     ParentModule,
     ClassModule,

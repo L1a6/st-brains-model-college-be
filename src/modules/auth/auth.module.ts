@@ -5,12 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EmailModule } from '../email/email.module';
-<<<<<<< HEAD
 import { InviteModule } from '../invites/invites.module';
-=======
-import { Invite } from '../invites/entities/invites.entity';
-import { InviteModelAction } from '../invites/invite.model-action';
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 import { Parent } from '../parent/entities/parent.entity';
 import { SessionModule } from '../session/session.module';
 import { Student } from '../student/entities/student.entity';
@@ -27,16 +22,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     UserModule,
     EmailModule,
-<<<<<<< HEAD
     InviteModule,
     SessionModule,
     PassportModule,
     TypeOrmModule.forFeature([Teacher, Student, Parent]),
-=======
-    SessionModule,
-    PassportModule,
-    TypeOrmModule.forFeature([Teacher, Student, Parent, Invite]),
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -47,17 +36,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-<<<<<<< HEAD
   providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
-=======
-  providers: [
-    AuthService,
-    JwtStrategy,
-    JwtAuthGuard,
-    RolesGuard,
-    InviteModelAction,
-  ],
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
   exports: [AuthService, JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}

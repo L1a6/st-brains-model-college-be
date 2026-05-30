@@ -19,10 +19,6 @@ import { InviteService } from './invites.service';
   ],
   controllers: [InvitesController],
   providers: [InviteService, InviteModelAction],
-<<<<<<< HEAD
   exports: [InviteService, InviteModelAction],
-=======
-  exports: [InviteService],
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 })
 export class InviteModule {}

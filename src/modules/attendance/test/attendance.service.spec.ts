@@ -96,10 +96,7 @@ describe('AttendanceService', () => {
       manager: {
         findOne: mockFindOne,
         find: mockFind,
-<<<<<<< HEAD
         query: jest.fn().mockResolvedValue([]),
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
         createQueryBuilder: jest.fn(() => ({
           innerJoin: jest.fn().mockReturnThis(),
           leftJoinAndSelect: jest.fn().mockReturnThis(),

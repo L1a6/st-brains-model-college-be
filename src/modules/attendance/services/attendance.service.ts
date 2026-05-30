@@ -9,11 +9,6 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 
-<<<<<<< HEAD
-=======
-import { Student } from 'src/modules/student/entities';
-
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 import { IPaginationMeta } from '../../../common/types/base-response.interface';
 import * as sysMsg from '../../../constants/system.messages';
 import { AcademicSessionService } from '../../academic-session/academic-session.service';
@@ -21,10 +16,7 @@ import { TermName } from '../../academic-term/entities/term.entity';
 import { TermModelAction } from '../../academic-term/model-actions';
 import { ClassStudent } from '../../class/entities/class-student.entity';
 import { ClassTeacher } from '../../class/entities/class-teacher.entity';
-<<<<<<< HEAD
 import { Student } from '../../student/entities/student.entity';
-=======
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Schedule } from '../../timetable/entities/schedule.entity';
 import { DayOfWeek } from '../../timetable/enums/timetable.enums';
@@ -1220,22 +1212,12 @@ export class AttendanceService {
       throw new BadRequestException(sysMsg.REGISTRATION_NUMBER_REQUIRED);
     }
 
-<<<<<<< HEAD
     // Find student by registration number using the manager path covered by tests
     const studentRow = await this.dataSource.manager.findOne(Student, {
       where: { registration_number: registrationNumber },
     });
 
     if (!studentRow) {
-=======
-    // 🔎 Find student by registration_number
-    const student = await this.dataSource.manager.findOne(Student, {
-      where: { registration_number: registrationNumber },
-      relations: ['user', 'parent'],
-    });
-
-    if (!student) {
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
       throw new NotFoundException(sysMsg.CHILD_REGISTRATION_NUMBER_NOT_FOUNS);
     }
 
@@ -1257,11 +1239,7 @@ export class AttendanceService {
           session_id: await this.academicSessionService
             .activeSessions()
             .then((s) => s.data.id),
-<<<<<<< HEAD
           student_id: studentRow.id,
-=======
-          student_id: student.id, // 👈 use student.id after lookup
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
         },
       });
 
@@ -1324,13 +1302,8 @@ export class AttendanceService {
       message: sysMsg.STUDENT_MONTHLY_ATTENDANCE_RETRIEVED,
       month: this.monthNames[month],
       year,
-<<<<<<< HEAD
       registration_number: studentRow.registration_number,
       student_id: studentRow.id,
-=======
-      registration_number: student.registration_number,
-      student_id: student.id,
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
       total_days_in_month: totalDaysInMonth,
       days_present: daysPresent,
       days_absent: daysAbsent,

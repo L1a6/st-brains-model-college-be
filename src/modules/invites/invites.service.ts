@@ -88,7 +88,6 @@ export class InviteService {
       );
       expiresAt.setDate(expiresAt.getDate() + tokenExpirationDays);
 
-<<<<<<< HEAD
       const invitePayload = {
         email: inviteUserDto.email,
         role: inviteUserDto.role,
@@ -121,23 +120,6 @@ export class InviteService {
                 transaction: manager,
               },
             });
-=======
-      const savedInvite = await this.inviteModelAction.create({
-        createPayload: {
-          email: inviteUserDto.email,
-          role: inviteUserDto.role,
-          full_name: inviteUserDto.full_name,
-          token_hash: tokenHash,
-          expires_at: expiresAt,
-          status: InviteStatus.PENDING,
-          accepted: false,
-        },
-        transactionOptions: {
-          useTransaction: true,
-          transaction: manager,
-        },
-      });
->>>>>>> cb0e039 (feat: build backend for St.Brain's College)
 
       // Send invitation email
       await this.sendInvitationEmail(inviteUserDto, token);
