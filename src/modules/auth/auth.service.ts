@@ -22,6 +22,7 @@ import { EmailTemplateID } from '../../constants/email-constants';
 import * as sysMsg from '../../constants/system.messages';
 import { EmailService } from '../email/email.service';
 import { EmailPayload } from '../email/email.types';
+import { InviteStatus } from '../invites/entities/invites.entity';
 import { InviteModelAction } from '../invites/invite.model-action';
 import { SessionService } from '../session/session.service';
 import { UserService } from '../user/user.service';
@@ -411,28 +412,50 @@ export class AuthService {
         );
       }
     } else {
+      // User does not exist, check for invite
       if (!inviteToken) {
         throw new ForbiddenException(sysMsg.REGISTRATION_INVITE_ONLY);
       }
 
+      // Verify invite
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(inviteToken)
+        .digest('hex');
+
       const invite = await this.inviteModelAction.get({
-        identifierOptions: { token_hash: inviteToken },
+        identifierOptions: {
+          token_hash: hashedToken,
+          status: InviteStatus.PENDING,
+        },
       });
 
       if (!invite) {
         throw new NotFoundException(sysMsg.INVALID_VERIFICATION_TOKEN);
       }
 
-      if (invite.email !== email) {
+      if (invite.accepted) {
+        throw new ConflictException('This invitation has already been used.');
+      }
+
+      if (new Date() > invite.expires_at) {
+        throw new BadRequestException(sysMsg.TOKEN_EXPIRED);
+      }
+
+      // Critical: Check if invite email matches Google email
+      if (invite.email.toLowerCase() !== email.toLowerCase()) {
         throw new ConflictException(sysMsg.INVITE_EMAIL_MISMATCH);
       }
 
-      // Create new user from the invitation details
+      // Create new user
       const password = crypto.randomBytes(16).toString('hex');
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const firstName = given_name || '';
-      const lastName = family_name || '';
+      const names = invite.full_name
+        ? invite.full_name.split(' ')
+        : [given_name, family_name];
+      const firstName = names[0] || given_name;
+      const lastName = names.slice(1).join(' ') || family_name || '';
 
       user = await this.userService.create({
         email,
@@ -443,15 +466,19 @@ export class AuthService {
         google_id: googleId,
         is_active: true,
         is_verified: true,
-        role: [UserRole.STUDENT],
+        role: [invite.role as UserRole], // Use role from invite
         gender: 'Other',
         dob: new Date().toISOString().split('T')[0],
         phone: '',
       });
 
+      // Mark invite as accepted
       await this.inviteModelAction.update({
         identifierOptions: { id: invite.id },
-        updatePayload: { accepted: true },
+        updatePayload: {
+          accepted: true,
+          status: InviteStatus.USED,
+        },
         transactionOptions: { useTransaction: false },
       });
     }

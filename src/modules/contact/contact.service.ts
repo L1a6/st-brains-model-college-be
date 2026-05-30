@@ -66,7 +66,6 @@ export class ContactService {
       total_pages: Math.ceil(total / limit),
     };
   }
-
   async create(createContactDto: CreateContactDto) {
     this.spamDetectionService.validateSubmission(createContactDto);
 

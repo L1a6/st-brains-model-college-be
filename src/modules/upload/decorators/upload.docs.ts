@@ -13,7 +13,6 @@ import {
 } from '../docs/upload.swagger';
 
 import { pictureUploadConfig } from './multer.config';
-
 /**
  * Decorators for Upload module
  */

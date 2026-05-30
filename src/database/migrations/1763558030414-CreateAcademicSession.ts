@@ -5,7 +5,6 @@ export class CreateAcademicSessionTable1700000000000
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
-
     await queryRunner.createTable(
       new Table({
         name: 'academic_sessions',

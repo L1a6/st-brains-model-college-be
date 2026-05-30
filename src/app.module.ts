@@ -21,6 +21,7 @@ import { DatabaseModule } from './modules/database-setup/database.module';
 import { EmailModule } from './modules/email/email.module';
 import { FeesModule } from './modules/fees/fees.module';
 import { GradeModule } from './modules/grade/grade.module';
+import { InviteModule } from './modules/invites/invites.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ParentModule } from './modules/parent/parent.module';
 import { PaymentModule } from './modules/payment/payment.module';
@@ -38,6 +39,7 @@ import { TeacherSubjectModule } from './modules/teacher-subject/teacher-subject.
 import { TimetableModule } from './modules/timetable/timetable.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { UserModule } from './modules/user/user.module';
+import { WaitlistModule } from './modules/waitlist/waitlist.module';
 
 @Module({
   imports: [
@@ -68,6 +70,7 @@ import { UserModule } from './modules/user/user.module';
       }),
     }),
     AuthModule,
+    WaitlistModule,
     UserModule,
     EmailModule,
     SchoolModule,
@@ -75,6 +78,7 @@ import { UserModule } from './modules/user/user.module';
     TeachersModule,
     ParentModule,
     ClassModule,
+    InviteModule,
     AcademicSessionModule,
     AttendanceModule,
     SubjectModule,
@@ -103,13 +107,10 @@ import { UserModule } from './modules/user/user.module';
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
     },
+    LoggingInterceptor,
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
     },
   ],
 })

@@ -15,7 +15,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     # Only deploy if CI passed
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
     
     env:
       HOST: ${{ secrets.HOST }}

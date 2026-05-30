@@ -466,7 +466,6 @@ export class StudentService {
       academicSession.academicYear ||
       normalizedAcademicYear ||
       '';
-
     // --- 2. Get classes under session ---
     const classesResponse = await this.classModelAction.find({
       findOptions: { academicSession: { id: academicSession.id } },

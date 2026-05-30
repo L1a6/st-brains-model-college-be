@@ -459,6 +459,19 @@ export class TeachersAttendanceService {
       throw new BadRequestException(sysMsg.CHECK_IN_DATE_IS_IN_THE_FUTURE);
     }
 
+    // --- Validate date is not too far in the past (e.g., max 7 days) ---
+    const maxPastDays = 7; //todo: get from school settings when implemented
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() - maxPastDays);
+    if (
+      checkInDate.getFullYear() === today.getFullYear() &&
+      checkInDate < minDate
+    ) {
+      throw new BadRequestException(
+        sysMsg.CHECK_IN_DATE_CANNOT_BE_MORE_THAN_DAYS_IN_THE_PAST(maxPastDays),
+      );
+    }
+
     // --- Validate check-in time is within school hours ---
     const schoolStartHour = 7; // 7:00 AM
     const schoolEndHour = 17; // 5:00 PM
@@ -496,19 +509,6 @@ export class TeachersAttendanceService {
     if (pendingRequest) {
       throw new ConflictException(
         sysMsg.PENDING_MANUAL_CHECKIN_REQUEST_EXISTS_FOR_THIS_DATE,
-      );
-    }
-
-    // --- Validate date is not too far in the past (e.g., max 7 days) ---
-    const maxPastDays = 7; //todo: get from school settings when implemented
-    const minDate = new Date(today);
-    minDate.setDate(today.getDate() - maxPastDays);
-    if (
-      checkInDate.getFullYear() === today.getFullYear() &&
-      checkInDate < minDate
-    ) {
-      throw new BadRequestException(
-        sysMsg.CHECK_IN_DATE_CANNOT_BE_MORE_THAN_DAYS_IN_THE_PAST(maxPastDays),
       );
     }
 

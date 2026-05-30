@@ -22,7 +22,6 @@ export class ContactController {
   listEnrollments(@Query('page') page = '1', @Query('limit') limit = '20') {
     return this.contactService.findAll({ page, limit });
   }
-
   @Post()
   @UseGuards(RateLimitGuard)
   @RateLimit({ maxRequests: 3, windowMs: 15 * 60 * 1000 }) // 3 requests per 15 minutes

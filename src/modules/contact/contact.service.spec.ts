@@ -56,7 +56,6 @@ describe('ContactService', () => {
   const mockContactRepository = {
     createQueryBuilder: jest.fn(),
   };
-
   const mockContactModelAction = {
     create: jest.fn(),
   };
